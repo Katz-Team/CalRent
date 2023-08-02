@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">calculateRent</string>
+    <string name="initRoom">Khởi tạo phòng</string>
+</resources>
