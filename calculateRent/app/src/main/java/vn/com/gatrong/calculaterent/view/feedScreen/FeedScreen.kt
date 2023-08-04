@@ -13,10 +13,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.outlined.Create
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -29,6 +33,7 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -36,6 +41,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -52,6 +58,7 @@ import vn.com.gatrong.calculaterent.navigation.NavigateState
 import vn.com.gatrong.calculaterent.navigation.Navigator
 import vn.com.gatrong.calculaterent.view.feedScreen.FeedViewModel
 
+@SuppressLint("UnrememberedMutableState", "MutableCollectionMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FeedScreen() {
@@ -59,6 +66,8 @@ fun FeedScreen() {
     val viewModel = viewModel<FeedViewModel>()
     var bills = viewModel.getRoom().collectAsStateWithLifecycle()
     var expanded by remember { mutableStateOf(false) }
+    var editMode by remember { mutableStateOf(false) }
+    val selected = remember { mutableStateOf(setOf<Long>()) }
 
     Scaffold(modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -76,12 +85,34 @@ fun FeedScreen() {
                             )
 
                             DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                                DropdownMenuItem(text = { Text(text = "Chỉnh sửa") }, onClick = {  })
+                                DropdownMenuItem(
+                                    text = { Text(text = "Chỉnh sửa") },
+                                    onClick = {
+                                        editMode = !editMode
+                                        expanded = false
+                                    }
+                                )
                             }
                         }
 
                     )
 
+                },
+                navigationIcon = {
+                    if (editMode) {
+                        IconButton(
+                            content = {
+                                Icon(
+                                    Icons.Default.ArrowBack,
+                                    contentDescription = Icons.Default.ArrowBack.toString()
+                                )
+                            },
+                            onClick = {
+                                editMode = false
+                                selected.value = setOf<Long>()
+                            }
+                        )
+                    }
                 }
             )
 
@@ -97,8 +128,33 @@ fun FeedScreen() {
                             Điện: ${bills.value.bills.get(index).electricityBill.getMoney().formatToMoney()}
                             Nước: ${bills.value.bills.get(index).waterBill.getMoney().formatToMoney()}
                                                         """.trimIndent()) },
+                            leadingContent = {
+                                 if (editMode) {
+                                     Checkbox(
+                                         checked = selected.value.contains(bills.value.bills.get(index).id),
+                                         onCheckedChange = { isChecked ->
+                                             if (selected.value.contains(bills.value.bills.get(index).id)) {
+                                                 selected.value -= bills.value.bills.get(index).id
+                                             } else {
+                                                 selected.value += bills.value.bills.get(index).id
+                                             }
+                                         }
+                                     )
+                                 }
+                            },
                             modifier = Modifier.clickable {
-                                Navigator.navigateTo(NavigateState(NavigateState.BILL_SCREEN),bills.value.bills.get(index))
+                                if (editMode) {
+                                    if (selected.value.contains(bills.value.bills.get(index).id)) {
+                                        selected.value -= bills.value.bills.get(index).id
+                                    } else {
+                                        selected.value += bills.value.bills.get(index).id
+                                    }
+                                } else {
+                                    Navigator.navigateTo(
+                                        NavigateState(NavigateState.BILL_SCREEN),
+                                        bills.value.bills.get(index)
+                                    )
+                                }
                             }
                         )
                     }
@@ -106,18 +162,41 @@ fun FeedScreen() {
             }
         },
         floatingActionButton = {
-            LargeFloatingActionButton(
-                onClick = {
-                    Navigator.navigateTo(NavigateState(NavigateState.CAL_SCREEN))
-                },
-                content = {
-                    Icon(
-                        Icons.Outlined.Create,
-                        contentDescription = "Create",
-                        modifier = Modifier.size(FloatingActionButtonDefaults.LargeIconSize)
+            if (!editMode) {
+                LargeFloatingActionButton(
+                    onClick = {
+                        Navigator.navigateTo(NavigateState(NavigateState.CAL_SCREEN))
+                    },
+                    content = {
+                        Icon(
+                            Icons.Outlined.Create,
+                            contentDescription = "Create",
+                            modifier = Modifier.size(FloatingActionButtonDefaults.LargeIconSize)
+                        )
+                    }
+                )
+            }
+        },
+        bottomBar = {
+            if (editMode && selected.value.isNotEmpty()) {
+                BottomAppBar {
+                    IconButton(
+                        content = {
+                            Icon(
+                                Icons.Default.Delete,
+                                contentDescription = Icons.Default.Delete.toString()
+                            )
+                        },
+                        onClick = {
+                            selected.value.forEach { item ->
+                                bills.value.bills.find { it.id == item }?.let { billSelected ->
+                                    viewModel.deleteBill(billSelected)
+                                }
+                            }
+                        }
                     )
                 }
-            )
+            }
         }
     )
 
