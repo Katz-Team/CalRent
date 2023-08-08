@@ -118,46 +118,47 @@ fun FeedScreen() {
 
         },
         content = { paddingValues ->
-            LazyColumn(Modifier.padding(paddingValues)) {
+            LazyColumn(
+                modifier = Modifier.padding(paddingValues),
+                reverseLayout = true
+            ) {
                 items(bills.value.bills.size) { index ->
-                    if (index != bills.value.bills.size - 1) {
-                        ListItem(
-                            overlineText = { Text(text = "${bills.value.bills.get(index).timeFrom.toDateString()} - ${bills.value.bills.get(index).timeTo.toDateString()}") },
-                            headlineText = { Text(text = bills.value.bills.get(index).getTotalMoney().formatToMoney()) },
-                            supportingText = { Text(text = """
-                            Điện: ${bills.value.bills.get(index).electricityBill.getMoney().formatToMoney()}
-                            Nước: ${bills.value.bills.get(index).waterBill.getMoney().formatToMoney()}
-                                                        """.trimIndent()) },
-                            leadingContent = {
-                                 if (editMode) {
-                                     Checkbox(
-                                         checked = selected.value.contains(bills.value.bills.get(index).id),
-                                         onCheckedChange = { isChecked ->
-                                             if (selected.value.contains(bills.value.bills.get(index).id)) {
-                                                 selected.value -= bills.value.bills.get(index).id
-                                             } else {
-                                                 selected.value += bills.value.bills.get(index).id
-                                             }
+                    ListItem(
+                        overlineText = { Text(text = "${bills.value.bills.get(index).timeFrom.toDateString()} - ${bills.value.bills.get(index).timeTo.toDateString()}") },
+                        headlineText = { Text(text = bills.value.bills.get(index).getTotalMoney().formatToMoney()) },
+                        supportingText = { Text(text = """
+                        Điện: ${bills.value.bills.get(index).electricityBill.getMoney().formatToMoney()}
+                        Nước: ${bills.value.bills.get(index).waterBill.getMoney().formatToMoney()}
+                                                    """.trimIndent()) },
+                        leadingContent = {
+                             if (editMode) {
+                                 Checkbox(
+                                     checked = selected.value.contains(bills.value.bills.get(index).id),
+                                     onCheckedChange = { isChecked ->
+                                         if (selected.value.contains(bills.value.bills.get(index).id)) {
+                                             selected.value -= bills.value.bills.get(index).id
+                                         } else {
+                                             selected.value += bills.value.bills.get(index).id
                                          }
-                                     )
-                                 }
-                            },
-                            modifier = Modifier.clickable {
-                                if (editMode) {
-                                    if (selected.value.contains(bills.value.bills.get(index).id)) {
-                                        selected.value -= bills.value.bills.get(index).id
-                                    } else {
-                                        selected.value += bills.value.bills.get(index).id
-                                    }
+                                     }
+                                 )
+                             }
+                        },
+                        modifier = Modifier.clickable {
+                            if (editMode) {
+                                if (selected.value.contains(bills.value.bills.get(index).id)) {
+                                    selected.value -= bills.value.bills.get(index).id
                                 } else {
-                                    Navigator.navigateTo(
-                                        NavigateState(NavigateState.BILL_SCREEN),
-                                        bills.value.bills.get(index)
-                                    )
+                                    selected.value += bills.value.bills.get(index).id
                                 }
+                            } else {
+                                Navigator.navigateTo(
+                                    NavigateState(NavigateState.BILL_SCREEN),
+                                    bills.value.bills.get(index)
+                                )
                             }
-                        )
-                    }
+                        }
+                    )
                 }
             }
         },

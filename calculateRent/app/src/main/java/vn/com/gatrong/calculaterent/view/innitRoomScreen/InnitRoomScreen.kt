@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -27,15 +28,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import vn.com.gatrong.calculaterent.R
 import vn.com.gatrong.calculaterent.extensions.formatToMoney
+import vn.com.gatrong.calculaterent.extensions.formatToMoneyString
 import vn.com.gatrong.calculaterent.model.DefaultSurcharge
 
 @Composable
@@ -94,7 +100,7 @@ fun InnitScreen() {
 @Composable
 fun Step1() {
     val viewModel = viewModel<InnitRoomViewModel>()
-
+    val focusManager = LocalFocusManager.current
     OutlinedTextField(
         label = { Text("Ngày bắt đầu") },
         value = viewModel.time.collectAsStateWithLifecycle().value,
@@ -102,13 +108,20 @@ fun Step1() {
             viewModel.time.value = it
         },
         singleLine = true,
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Decimal,
+            imeAction = ImeAction.Next
+        ),
+        keyboardActions = KeyboardActions(
+            onNext = {
+                focusManager.moveFocus(FocusDirection.Down)
+        })
     )
 
     OutlinedTextField(label = { Text("Tiền thuê phòng") },
         value = viewModel.rentHouse.collectAsStateWithLifecycle().value.formatToMoney(),
         onValueChange = {
-            viewModel.rentHouse.value = it.replace(",","")
+            viewModel.rentHouse.value = it.formatToMoneyString()
         },
         singleLine = true,
         trailingIcon = { Text("VND") },
@@ -121,33 +134,60 @@ fun Step1() {
 @Composable
 fun Step2() {
     val viewModel = viewModel<InnitRoomViewModel>()
-
+    val focusManager = LocalFocusManager.current
     OutlinedTextField(label = { Text("Giá điện") },
         value = viewModel.rentElect.collectAsStateWithLifecycle().value.formatToMoney(),
-        onValueChange = { viewModel.rentElect.value = it.replace(",","")  },
+        onValueChange = { viewModel.rentElect.value = it.formatToMoneyString()  },
         trailingIcon = { Text("VND") },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Decimal,
+            imeAction = ImeAction.Next
+        ),
+        keyboardActions = KeyboardActions(
+            onNext = {
+                focusManager.moveFocus(FocusDirection.Down)
+            }
+        )
     )
 
     OutlinedTextField(label = { Text("Khối điện khởi điểm") },
         value = viewModel.kgElect.collectAsStateWithLifecycle().value,
-        onValueChange = { viewModel.kgElect.value = it },
+        onValueChange = { viewModel.kgElect.value = if (it.isDigitsOnly()) it else viewModel.kgElect.value },
         trailingIcon = { Text("Kwh") },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Decimal,
+            imeAction = ImeAction.Next
+        ),
+        keyboardActions = KeyboardActions(
+            onNext = {
+                focusManager.moveFocus(FocusDirection.Down)
+            }
+        )
     )
 
     OutlinedTextField(label = { Text("Giá nước") },
         value = viewModel.rentWater.collectAsStateWithLifecycle().value.formatToMoney(),
-        onValueChange = { viewModel.rentWater.value = it.replace(",","")  },
+        onValueChange = { viewModel.rentWater.value = it.formatToMoneyString()  },
         trailingIcon = { Text("VND") },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Decimal,
+            imeAction = ImeAction.Next
+        ),
+        keyboardActions = KeyboardActions(
+            onNext = {
+                focusManager.moveFocus(FocusDirection.Down)
+            }
+        )
     )
 
     OutlinedTextField(label = { Text("Khối nước khởi điểm") },
         value = viewModel.kgWater.collectAsStateWithLifecycle().value,
-        onValueChange = { viewModel.kgWater.value = it },
+        onValueChange = { viewModel.kgWater.value = if (it.isDigitsOnly()) it else viewModel.kgWater.value },
         trailingIcon = { Text("Dm3") },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Decimal,
+            imeAction = ImeAction.Done
+        )
     )
 }
 
@@ -156,7 +196,7 @@ fun Step2() {
 @Composable
 fun Step3() {
     val viewModel = viewModel<InnitRoomViewModel>()
-
+    val focusManager = LocalFocusManager.current
 
     LazyColumn(horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -166,9 +206,19 @@ fun Step3() {
             OutlinedTextField(label = { Text("${defaultSurcharge.name} ${index + 1}") },
                 value = defaultSurcharge.price.formatToMoney(),
                 onValueChange = {
-                    viewModel.defaultSurcharges.get(index).value = DefaultSurcharge(price = it.replace(",","").toLong())
+                    viewModel.defaultSurcharges.get(index).value = DefaultSurcharge(
+                        price = if (it.isNotEmpty()) it.formatToMoneyString().toLong() else 0
+                    )
                 },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Decimal,
+                    imeAction = if (index + 1 < viewModel.defaultSurcharges.size) ImeAction.Next else ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(
+                    onNext = {
+                        focusManager.moveFocus(FocusDirection.Down)
+                    }
+                )
             )
         }
 

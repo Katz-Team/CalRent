@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -27,6 +28,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -41,6 +46,7 @@ import vn.com.gatrong.calculaterent.navigation.Navigator
 @Composable
 fun CalScreen() {
     val viewModel = viewModel<CalViewModel>()
+    val focusManager = LocalFocusManager.current
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -81,7 +87,15 @@ fun CalScreen() {
                             }
                         },
                         trailingIcon = { Text("Kwh") },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Decimal,
+                            imeAction = ImeAction.Next
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onNext = {
+                                focusManager.moveFocus(FocusDirection.Down)
+                            }
+                        )
                     )
 
                     OutlinedTextField(
@@ -94,7 +108,10 @@ fun CalScreen() {
                             }
                         },
                         trailingIcon = { Text("Dm3") },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Decimal,
+                            imeAction = ImeAction.Done
+                        )
                     )
 
 
@@ -107,7 +124,8 @@ fun CalScreen() {
                         viewModel.insertBill {
                             Navigator.navigateTo(NavigateState(NavigateState.BILL_SCREEN),it)
                         }
-                    }
+                    },
+                    enabled = viewModel.getEnableButton().collectAsStateWithLifecycle().value
                 ) { Text("Tính tiền") }
             }
         }

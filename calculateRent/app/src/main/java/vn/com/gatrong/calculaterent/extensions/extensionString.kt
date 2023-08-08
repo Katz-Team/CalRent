@@ -23,5 +23,9 @@ fun String.formatToMoney() : String {
     if (this.isEmpty())
         return this
     val formatter = DecimalFormat("#,###")
-    return formatter.format(this.toLong())
+    return formatter.format(this.toLong()).replace(",",".")
+}
+
+fun String.formatToMoneyString() : String {
+    return this.replace(".","")
 }

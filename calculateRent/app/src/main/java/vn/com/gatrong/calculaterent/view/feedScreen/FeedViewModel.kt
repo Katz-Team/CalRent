@@ -32,7 +32,7 @@ class FeedViewModel : ViewModel() {
 
         viewModelScope.launch {
             repository.getFlowBills().stateIn(viewModelScope).collect { bills ->
-                room.value = Room(bills.reversed())
+                room.value = Room(bills)
             }
         }
     }
