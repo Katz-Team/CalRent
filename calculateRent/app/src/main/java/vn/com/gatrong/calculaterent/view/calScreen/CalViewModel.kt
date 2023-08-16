@@ -18,22 +18,7 @@ class CalViewModel : ViewModel() {
 
     private val kgWater = MutableStateFlow("")
 
-    private val enableButton = MutableStateFlow(true)
-
     private val databaseUsecase = DatabaseUsecase()
-
-    init {
-        viewModelScope.launch {
-            kgElect.collect {
-                enableButton.value = it.isNotEmpty() && kgWater.value.isNotEmpty()
-            }
-        }
-        viewModelScope.launch {
-            kgWater.collect {
-                enableButton.value = it.isNotEmpty() && kgElect.value.isNotEmpty()
-            }
-        }
-    }
 
     fun setElect(value : String) {
         kgElect.value = value
@@ -46,8 +31,6 @@ class CalViewModel : ViewModel() {
     fun getElect() = kgElect.asStateFlow()
 
     fun getWater() = kgWater.asStateFlow()
-
-    fun getEnableButton() = enableButton.asStateFlow()
 
     fun insertBill( onDone: (bill : Bill) -> Unit ) {
         viewModelScope.launch(Dispatchers.IO) {

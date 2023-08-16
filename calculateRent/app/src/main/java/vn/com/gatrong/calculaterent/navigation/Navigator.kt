@@ -7,24 +7,42 @@ import kotlinx.coroutines.flow.update
 class Navigator {
 
     companion object {
-        private val _stateScreen = MutableStateFlow<NavigateState>(NavigateState(NavigateState.FEED_SCREEN))
-        val stateScreen = _stateScreen.asStateFlow()
+        private val stateNavigate = MutableStateFlow<Screen>(Screen.FeedScreen())
 
-        lateinit var data : Any
+        var stackBundle = ArrayList<Pair<String, Screen>>()
 
-        fun navigateTo(navigateState: NavigateState) {
-            _stateScreen.update {
-                it.copy(navigateState.label)
+        fun navigateTo(navigateState: Screen) {
+            stateNavigate.update {
+                navigateState
             }
         }
 
-        fun navigateTo(navigateState: NavigateState, data : Any) {
-            this.data = data
-            navigateTo(navigateState = navigateState)
+        fun getNavigate() = stateNavigate.asStateFlow()
+
+        fun pushBundle(key: String, screen: Screen) {
+            stackBundle.add(Pair(key, screen))
+        }
+
+        fun getBundle(key: String): Screen? {
+            val index = stackBundle.indexOfLast { it.first == key }
+            if (index != -1) {
+                return stackBundle[index].second
+            }
+            return null
+        }
+
+        fun popBundle(key: String): Screen? {
+            val index = stackBundle.indexOfLast { it.first == key }
+            if (index != -1) {
+                val value = stackBundle[index].second
+                stackBundle.removeAt(index)
+                return value
+            }
+            return null
         }
 
         fun back() {
-            navigateTo(navigateState = NavigateState(NavigateState.BACK))
+            navigateTo(navigateState = Screen.Back())
         }
     }
 }

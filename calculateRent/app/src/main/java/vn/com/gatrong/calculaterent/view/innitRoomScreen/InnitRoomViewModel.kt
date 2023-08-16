@@ -15,7 +15,7 @@ import vn.com.gatrong.calculaterent.model.DefaultSetting
 import vn.com.gatrong.calculaterent.model.DefaultSurcharge
 import vn.com.gatrong.calculaterent.model.ElectricityBill
 import vn.com.gatrong.calculaterent.model.WaterBill
-import vn.com.gatrong.calculaterent.navigation.NavigateState
+import vn.com.gatrong.calculaterent.navigation.Screen
 import vn.com.gatrong.calculaterent.navigation.Navigator
 import vn.com.gatrong.calculaterent.util.UtilRegex
 
@@ -134,7 +134,7 @@ class InnitRoomViewModel : ViewModel() {
                     timeTo = time.value.toLongPatternDDMMYYYY())
                 )
 
-                Navigator.navigateTo(NavigateState(NavigateState.FEED_SCREEN))
+                Navigator.navigateTo(Screen.FeedScreen())
             }
             else -> {
 

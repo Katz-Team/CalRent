@@ -1,8 +1,6 @@
 package vn.com.gatrong.calculaterent
 
-import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import vn.com.gatrong.calculaterent.navigation.NavigateState
+import vn.com.gatrong.calculaterent.navigation.Screen
 import vn.com.gatrong.calculaterent.navigation.Navigator
 import vn.com.gatrong.calculaterent.ui.theme.CalculateRentTheme
 import vn.com.gatrong.calculaterent.view.FeedScreen
@@ -44,13 +42,15 @@ fun NavigationView() {
     val navController = rememberNavController()
 
     LaunchedEffect(navController::class) {
-        Navigator.stateScreen.collect {
-            if (it.label.equals(NavigateState.BACK)) {
+        Navigator.getNavigate().collect { navigateState ->
+            if (navigateState.route.equals(Screen.NavigateState.BACK.toString())) {
+                Navigator.popBundle(navController.currentBackStackEntry?.destination?.route.toString())
                 navController.popBackStack()
             } else {
-                navController.navigate(it.label) {
-                    if (it.label.equals(NavigateState.BILL_SCREEN)) {
-                        popUpTo(NavigateState.CAL_SCREEN) {
+                Navigator.pushBundle(navigateState.route, navigateState)
+                navController.navigate(navigateState.route) {
+                    if (navigateState.route.equals(Screen.NavigateState.BILL_SCREEN.toString())) {
+                        popUpTo(Screen.NavigateState.CAL_SCREEN.toString()) {
                             inclusive = true
                         }
                     }
@@ -59,10 +59,10 @@ fun NavigationView() {
         }
     }
 
-    NavHost(navController = navController, startDestination = NavigateState.FEED_SCREEN) {
-        composable(NavigateState.INNIT_SCREEN) { InnitScreen() }
-        composable(NavigateState.FEED_SCREEN) { FeedScreen() }
-        composable(NavigateState.CAL_SCREEN) { CalScreen() }
-        composable(NavigateState.BILL_SCREEN) { BillScreen() }
+    NavHost(navController = navController, startDestination = Screen.NavigateState.FEED_SCREEN.toString()) {
+        composable(Screen.NavigateState.INNIT_SCREEN.toString()) { InnitScreen() }
+        composable(Screen.NavigateState.FEED_SCREEN.toString()) { FeedScreen() }
+        composable(Screen.NavigateState.CAL_SCREEN.toString()) { CalScreen() }
+        composable(Screen.NavigateState.BILL_SCREEN.toString()) { BillScreen() }
     }
 }
