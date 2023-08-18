@@ -27,6 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import vn.com.gatrong.calculaterent.extensions.formatToMoney
 import vn.com.gatrong.calculaterent.extensions.toDateString
 import vn.com.gatrong.calculaterent.model.Bill
@@ -42,6 +43,7 @@ fun BillScreen() {
 
     val bill = screen.bill
     val modeView = screen.modeView
+    val viewModel = viewModel<BillViewModel>()
 
     Scaffold(Modifier.fillMaxSize(),
         topBar = {
@@ -138,11 +140,14 @@ fun BillScreen() {
                 }
 
                 if (!modeView) {
-                    Button(modifier = Modifier
-                        .fillMaxWidth(0.7f)
-                        .align(Alignment.BottomCenter),
+                    Button(
+                        modifier = Modifier
+                            .fillMaxWidth(0.7f)
+                            .align(Alignment.BottomCenter),
                         onClick = {
-                            Navigator.back()
+                            viewModel.insertBill(bill).let {
+                                Navigator.back()
+                            }
                         }
                     ) { Text("Hoàn tất") }
                 }

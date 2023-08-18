@@ -24,6 +24,22 @@ class DatabaseUsecase {
         RepositoryImpl.getInstance().insertBill(newBill)
     }
 
+    suspend fun insertBill(bill: Bill) {
+        RepositoryImpl.getInstance().insertBill(bill)
+    }
+
+    suspend fun getLastBillTemp(kgElect: Int, kgWater: Int, time: Long ) : Bill {
+        val default = RepositoryImpl.getInstance().getDefaultSetting()
+        val oldBill = RepositoryImpl.getInstance().getBillLast()
+        val tempBill = Bill(moneyRent = default.rentHouse,
+            electricityBill = ElectricityBill(oldBill.electricityBill.newElectric, kgElect,default.rentElect.toInt()),
+            waterBill = WaterBill(oldBill.waterBill.newWater,kgWater,default.rentWater.toInt()),
+            timeFrom = oldBill.timeTo,
+            timeTo = time,
+            surcharges = default.toSurcharges())
+        return tempBill
+    }
+
     fun getNewBill(): Bill {
         return newBill
     }

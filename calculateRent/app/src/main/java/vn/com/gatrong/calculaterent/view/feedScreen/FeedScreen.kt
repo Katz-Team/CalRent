@@ -2,8 +2,10 @@ package vn.com.gatrong.calculaterent.view
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -32,6 +34,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -101,45 +104,43 @@ fun FeedScreen() {
 
         },
         content = { paddingValues ->
-            LazyColumn(Modifier.padding(paddingValues)) {
+            LazyColumn(Modifier.padding(vertical = paddingValues.calculateTopPadding())) {
                 items(bills.value.bills.size) { index ->
-                    if (index != bills.value.bills.size - 1) {
-                        ListItem(
-                            overlineText = { Text(text = "${bills.value.bills.get(index).timeFrom.toDateString()} - ${bills.value.bills.get(index).timeTo.toDateString()}") },
-                            headlineText = { Text(text = bills.value.bills.get(index).getTotalMoney().formatToMoney()) },
-                            supportingText = { Text(text = """
+                    ListItem(
+                        overlineText = { Text(text = "${bills.value.bills.get(index).timeFrom.toDateString()} - ${bills.value.bills.get(index).timeTo.toDateString()}") },
+                        headlineText = { Text(text = bills.value.bills.get(index).getTotalMoney().formatToMoney()) },
+                        supportingText = { Text(text = """
                             Điện: ${bills.value.bills.get(index).electricityBill.getMoney().formatToMoney()}
                             Nước: ${bills.value.bills.get(index).waterBill.getMoney().formatToMoney()}
-                                                        """.trimIndent()) },
-                            leadingContent = {
-                                 if (editMode) {
-                                     Checkbox(
-                                         checked = selected.value.contains(bills.value.bills.get(index).id),
-                                         onCheckedChange = { isChecked ->
-                                             if (selected.value.contains(bills.value.bills.get(index).id)) {
-                                                 selected.value -= bills.value.bills.get(index).id
-                                             } else {
-                                                 selected.value += bills.value.bills.get(index).id
-                                             }
+                                                    """.trimIndent()) },
+                        leadingContent = {
+                             if (editMode) {
+                                 Checkbox(
+                                     checked = selected.value.contains(bills.value.bills.get(index).id),
+                                     onCheckedChange = { isChecked ->
+                                         if (selected.value.contains(bills.value.bills.get(index).id)) {
+                                             selected.value -= bills.value.bills.get(index).id
+                                         } else {
+                                             selected.value += bills.value.bills.get(index).id
                                          }
-                                     )
-                                 }
-                            },
-                            modifier = Modifier.clickable {
-                                if (editMode) {
-                                    if (selected.value.contains(bills.value.bills.get(index).id)) {
-                                        selected.value -= bills.value.bills.get(index).id
-                                    } else {
-                                        selected.value += bills.value.bills.get(index).id
-                                    }
+                                     }
+                                 )
+                             }
+                        },
+                        modifier = Modifier.clickable {
+                            if (editMode) {
+                                if (selected.value.contains(bills.value.bills.get(index).id)) {
+                                    selected.value -= bills.value.bills.get(index).id
                                 } else {
-                                    Navigator.navigateTo(
-                                        Screen.BillScreen(bills.value.bills.get(index))
-                                    )
+                                    selected.value += bills.value.bills.get(index).id
                                 }
+                            } else {
+                                Navigator.navigateTo(
+                                    Screen.BillScreen(bills.value.bills.get(index))
+                                )
                             }
-                        )
-                    }
+                        }
+                    )
                 }
             }
         },

@@ -27,12 +27,16 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import vn.com.gatrong.calculaterent.navigation.Screen
 import vn.com.gatrong.calculaterent.navigation.Navigator
 
@@ -81,7 +85,10 @@ fun CalScreen() {
                             }
                         },
                         trailingIcon = { Text("Kwh") },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Decimal,
+                            imeAction = ImeAction.Next
+                        )
                     )
 
                     OutlinedTextField(
@@ -94,7 +101,10 @@ fun CalScreen() {
                             }
                         },
                         trailingIcon = { Text("Dm3") },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Decimal,
+                            imeAction = ImeAction.Done
+                        )
                     )
 
 
@@ -104,8 +114,10 @@ fun CalScreen() {
                     .fillMaxWidth(0.7f)
                     .align(Alignment.BottomCenter),
                     onClick = {
-                        viewModel.insertBill {
-                            Navigator.navigateTo(Screen.BillScreen(it,false))
+                        CoroutineScope(Dispatchers.Main).launch {
+                            viewModel.getLastBillTemp().let {
+                                Navigator.navigateTo(Screen.BillScreen(it,false))
+                            }
                         }
                     }
                 ) { Text("Tính tiền") }

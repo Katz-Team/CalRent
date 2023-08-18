@@ -43,4 +43,10 @@ class CalViewModel : ViewModel() {
 
         }
     }
+
+    suspend fun getLastBillTemp() : Bill {
+        return viewModelScope.async {
+            databaseUsecase.getLastBillTemp(kgElect.value.toInt(),kgWater.value.toInt(),System.currentTimeMillis())
+        }.await()
+    }
 }
