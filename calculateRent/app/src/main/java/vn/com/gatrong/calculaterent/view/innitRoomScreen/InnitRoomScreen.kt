@@ -137,35 +137,58 @@ fun Step2() {
 
     OutlinedTextField(label = { Text("Giá điện") },
         value = viewModel.rentElect.collectAsStateWithLifecycle().value.formatToMoney(),
-        onValueChange = { viewModel.rentElect.value = it.replace(".","")  },
+        onValueChange = {
+            if (it.isDigitsOrDot()) {
+                viewModel.rentElect.value = it.replace(".","")
+            }
+        },
         trailingIcon = { Text("VND") },
         keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Decimal,
-                imeAction = ImeAction.Next
+            keyboardType = KeyboardType.Decimal,
+            imeAction = ImeAction.Next
         )
     )
 
     OutlinedTextField(label = { Text("Khối điện khởi điểm") },
         value = viewModel.kgElect.collectAsStateWithLifecycle().value,
-        onValueChange = { viewModel.kgElect.value = it },
+        onValueChange = {
+            if (it.isDigitsOnly()) {
+                viewModel.kgElect.value = it
+            }
+        },
         trailingIcon = { Text("Kwh") },
         keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Decimal,
+            keyboardType = KeyboardType.Decimal,
+            imeAction = ImeAction.Next
         )
     )
 
     OutlinedTextField(label = { Text("Giá nước") },
         value = viewModel.rentWater.collectAsStateWithLifecycle().value.formatToMoney(),
-        onValueChange = { viewModel.rentWater.value = it.replace(".","")  },
+        onValueChange = {
+            if (it.isDigitsOrDot()) {
+                viewModel.rentWater.value = it.replace(".","")
+            }
+        },
         trailingIcon = { Text("VND") },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Decimal,
+            imeAction = ImeAction.Next
+        )
     )
 
     OutlinedTextField(label = { Text("Khối nước khởi điểm") },
         value = viewModel.kgWater.collectAsStateWithLifecycle().value,
-        onValueChange = { viewModel.kgWater.value = it },
+        onValueChange = {
+            if (it.isDigitsOnly()) {
+                viewModel.kgWater.value = it
+            }
+        },
         trailingIcon = { Text("Dm3") },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Decimal,
+            imeAction = ImeAction.Done
+        )
     )
 }
 
