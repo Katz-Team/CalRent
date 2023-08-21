@@ -207,9 +207,14 @@ fun Step3() {
             OutlinedTextField(label = { Text("${defaultSurcharge.name} ${index + 1}") },
                 value = defaultSurcharge.price.formatToMoney(),
                 onValueChange = {
-                    viewModel.defaultSurcharges.get(index).value = DefaultSurcharge(price = it.replace(",","").toLong())
+                    if (it.isDigitsOrDot()) {
+                        viewModel.defaultSurcharges.get(index).value = DefaultSurcharge(price = it.replace(".","").toLong())
+                    }
                 },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Decimal,
+                    imeAction = ImeAction.Done
+                )
             )
         }
 
