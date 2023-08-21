@@ -208,7 +208,11 @@ fun Step3() {
                 value = defaultSurcharge.price.formatToMoney(),
                 onValueChange = {
                     if (it.isDigitsOrDot()) {
-                        viewModel.defaultSurcharges.get(index).value = DefaultSurcharge(price = it.replace(".","").toLong())
+                        if (it.isNotEmpty()) {
+                            viewModel.defaultSurcharges.get(index).value = DefaultSurcharge(price = it.replace(".","").toLong())
+                        } else {
+                            viewModel.defaultSurcharges.get(index).value = DefaultSurcharge(price = 0)
+                        }
                     }
                 },
                 keyboardOptions = KeyboardOptions(

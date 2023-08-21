@@ -120,7 +120,8 @@ class InnitRoomViewModel : ViewModel() {
                 }
 
                 RepositoryImpl.getInstance().modifiedSetting(
-                    DefaultSetting(timeNotification = time.value.toLongPatternDDMMYYYY(),
+                    DefaultSetting(
+                        timeNotification = time.value.toLongPatternDDMMYYYY(),
                         rentHouse = rentHouse.value.toLong(),
                         rentWater = rentWater.value.toLong(),
                         rentElect = rentElect.value.toLong(),
