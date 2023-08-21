@@ -1,5 +1,6 @@
 package vn.com.gatrong.calculaterent.extensions
 
+import androidx.core.text.isDigitsOnly
 import java.text.DecimalFormat
 import java.util.Calendar
 
@@ -23,5 +24,9 @@ fun String.formatToMoney() : String {
     if (this.isEmpty())
         return this
     val formatter = DecimalFormat("#,###")
-    return formatter.format(this.toLong())
+    return formatter.format(this.toLong()).replace(",",".")
+}
+
+fun String.isDigitsOrDot() : Boolean {
+    return Regex("^[0-9.]*$").matches(this)
 }
