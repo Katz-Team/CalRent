@@ -58,7 +58,13 @@ fun FeedScreen() {
     Scaffold(modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text(text = "Tiền trọ", color = MaterialTheme.colorScheme.onSurfaceVariant) },
+                title = {
+                    Text(
+                        text = "Tiền trọ",
+                        color = MaterialTheme.colorScheme.onSurface,
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                },
                 actions = {
                     IconButton(
                         onClick = {
@@ -107,12 +113,26 @@ fun FeedScreen() {
             LazyColumn(Modifier.padding(vertical = paddingValues.calculateTopPadding())) {
                 items(bills.value.bills.size) { index ->
                     ListItem(
-                        overlineText = { Text(text = "${bills.value.bills.get(index).timeFrom.toDateString()} - ${bills.value.bills.get(index).timeTo.toDateString()}") },
-                        headlineText = { Text(text = bills.value.bills.get(index).getTotalMoney().formatToMoney()) },
-                        supportingText = { Text(text = """
-                            Điện: ${bills.value.bills.get(index).electricityBill.getMoney().formatToMoney()}
-                            Nước: ${bills.value.bills.get(index).waterBill.getMoney().formatToMoney()}
-                                                    """.trimIndent()) },
+                        overlineText = {
+                            Text(
+                                text = "${bills.value.bills.get(index).timeFrom.toDateString()} - ${bills.value.bills.get(index).timeTo.toDateString()}",
+                            )
+                       },
+                        headlineText = {
+                            Text(
+                                text = bills.value.bills.get(index).getTotalMoney().formatToMoney(),
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                       },
+                        supportingText = {
+                            Text(
+                                text = """
+                                Điện: ${bills.value.bills.get(index).electricityBill.getMoney().formatToMoney()}
+                                Nước: ${bills.value.bills.get(index).waterBill.getMoney().formatToMoney()}
+                                """.trimIndent(),
+                                style = MaterialTheme.typography.bodyMedium
+                                )
+                         },
                         leadingContent = {
                              if (editMode) {
                                  Checkbox(

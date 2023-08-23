@@ -48,7 +48,13 @@ fun BillScreen() {
     Scaffold(Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text(text = "Tiền trọ", color = MaterialTheme.colorScheme.onSurfaceVariant) },
+                title = {
+                    Text(
+                        text = "Tiền trọ",
+                        color = MaterialTheme.colorScheme.onSurface,
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = { Navigator.back() }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = Icons.Default.ArrowBack.name)
@@ -67,74 +73,110 @@ fun BillScreen() {
                     .padding(12.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)) {
 
-                    Text(text = "${bill.timeFrom.toDateString()} - ${bill.timeTo.toDateString()}", modifier = Modifier.fillMaxWidth())
+                    Text(
+                        text = "${bill.timeFrom.toDateString()} - ${bill.timeTo.toDateString()}", modifier = Modifier.fillMaxWidth(),
+                        style = MaterialTheme.typography.titleMedium,
+                    )
 
                     Row(modifier = Modifier.fillMaxWidth()) {
-                        Text(modifier = Modifier.fillMaxWidth(0.15f),
+                        Text(
+                            modifier = Modifier.fillMaxWidth(0.15f),
                             text = "Điện:",
-                            textAlign = TextAlign.Left)
+                            textAlign = TextAlign.Left,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
 
-                        Text(modifier = Modifier.fillMaxWidth(0.7f),
+                        Text(
+                            modifier = Modifier.fillMaxWidth(0.7f),
                             text = "(${bill.electricityBill.newElectric} - ${bill.electricityBill.preElectric})x${bill.electricityBill.price.formatToMoney()}",
-                            textAlign = TextAlign.Left)
+                            textAlign = TextAlign.Left,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
 
-                        Text(modifier = Modifier.fillMaxWidth(),
+                        Text(
+                            modifier = Modifier.fillMaxWidth(),
                             text = bill.electricityBill.getMoney().formatToMoney(),
                             textAlign = TextAlign.Right,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodyLarge
                         )
                     }
 
                     Row(modifier = Modifier.fillMaxWidth()) {
-                        Text(modifier = Modifier.fillMaxWidth(0.15f),
+                        Text(
+                            modifier = Modifier.fillMaxWidth(0.15f),
                             text = "Nước:",
-                            textAlign = TextAlign.Left)
+                            textAlign = TextAlign.Left,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
 
-                        Text(modifier = Modifier.fillMaxWidth(0.7f),
+                        Text(
+                            modifier = Modifier.fillMaxWidth(0.7f),
                             text = "(${bill.waterBill.newWater} - ${bill.waterBill.preWater})x${bill.waterBill.price.formatToMoney()}",
-                            textAlign = TextAlign.Left)
+                            textAlign = TextAlign.Left,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
 
                         Text(modifier = Modifier.fillMaxWidth(),
                             text = bill.waterBill.getMoney().formatToMoney(),
                             textAlign = TextAlign.Right,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodyLarge
                         )
                     }
 
                     for (surcharge in bill.surcharges) {
                         Row(modifier = Modifier.fillMaxWidth()) {
-                            Text(modifier = Modifier.fillMaxWidth(0.7f),
+                            Text(
+                                modifier = Modifier.fillMaxWidth(0.7f),
                                 text = "${surcharge.name}:",
-                                textAlign = TextAlign.Left)
+                                textAlign = TextAlign.Left,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                style = MaterialTheme.typography.bodyLarge
+                            )
 
-                            Text(modifier = Modifier.fillMaxWidth(),
+                            Text(
+                                modifier = Modifier.fillMaxWidth(),
                                 text = surcharge.price.formatToMoney(),
                                 textAlign = TextAlign.Right,
                                 fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                style = MaterialTheme.typography.bodyLarge
+                            )
                         }
                     }
 
                     Row(modifier = Modifier.fillMaxWidth()) {
-                        Text(modifier = Modifier.fillMaxWidth(0.7f),
+                        Text(
+                            modifier = Modifier.fillMaxWidth(0.7f),
                             text = "Tiền nhà:",
-                            textAlign = TextAlign.Left)
+                            textAlign = TextAlign.Left,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
 
                         Text(modifier = Modifier.fillMaxWidth(),
                             text = bill.moneyRent.formatToMoney(),
                             textAlign = TextAlign.Right,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodyLarge
                         )
                     }
 
-                    Text(modifier = Modifier.fillMaxWidth(),
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
                         text = bill.getTotalMoney().formatToMoney(),
                         textAlign = TextAlign.Right,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.titleLarge
                     )
 
                 }

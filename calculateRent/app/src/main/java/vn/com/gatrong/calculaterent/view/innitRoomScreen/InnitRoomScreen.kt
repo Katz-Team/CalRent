@@ -56,7 +56,11 @@ fun InnitScreen() {
             verticalArrangement = Arrangement.spacedBy(14.dp) ,
             horizontalAlignment = Alignment.CenterHorizontally) {
 
-            Text(stringResource(id = R.string.initRoom), style = MaterialTheme.typography.headlineLarge)
+            Text(
+                stringResource(id = R.string.initRoom),
+                style = MaterialTheme.typography.headlineLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
 
 
             Spacer(modifier = Modifier
