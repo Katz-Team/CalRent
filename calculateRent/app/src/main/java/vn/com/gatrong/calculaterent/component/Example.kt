@@ -106,10 +106,18 @@ fun example() {
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                         keyboardActions = KeyboardActions(
                             onNext = {
-                                focusRequesters.get(viewItem + 1).requestFocus()
+                                if (viewItem + 1 > 20) {
+                                    // Nothing
+                                } else {
+                                    focusRequesters.get(viewItem + 1).requestFocus()
+                                }
 
                                 coroutineScope.launch {
-                                    bringIntoViewRequesters[viewItem + 3].bringIntoView()
+                                    if (viewItem + 3 > 20) {
+                                        buttonViewRequester.bringIntoView()
+                                    } else {
+                                        bringIntoViewRequesters[viewItem + 15].bringIntoView()
+                                    }
 //                                scrollState.animateScrollTo(scrollState.maxValue)
                                 }
                             }),
@@ -122,17 +130,21 @@ fun example() {
                     )
                 }
             }
+
+            item {
+                Button(
+                    onClick = {},
+                    modifier = Modifier
+                        .bringIntoViewRequester(buttonViewRequester)
+                ) {
+                    Text(text = "I'm Visible")
+                }
+            }
         }
 
 
 
-        Button(
-            onClick = {},
-            modifier = Modifier
-                .bringIntoViewRequester(buttonViewRequester)
-        ) {
-            Text(text = "I'm Visible")
-        }
+
     }
 }
 
