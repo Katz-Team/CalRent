@@ -2,21 +2,28 @@ package vn.com.gatrong.calculaterent.view.innitRoomScreen
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -227,12 +234,28 @@ fun Step3() {
         }
 
         item {
-            Button(modifier = Modifier
-                .fillMaxWidth(0.7f)
+            OutlinedButton(
+                modifier = Modifier.fillMaxWidth(0.7f),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    containerColor = MaterialTheme.colorScheme.background,
+                    contentColor = MaterialTheme.colorScheme.primary
+                ),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
                 ,onClick = {
                     viewModel.defaultSurcharges.add(MutableStateFlow(DefaultSurcharge()))
                 }
-            ) { Text("Thêm") }
+            ) {
+                Row() {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = Icons.Default.Add.name,
+                    )
+                    
+                    Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
+
+                    Text("Thêm")
+                }
+            }
         }
     }
 
