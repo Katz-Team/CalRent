@@ -1,6 +1,7 @@
 package vn.com.gatrong.calculaterent.view.innitRoomScreen
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -27,16 +28,16 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
@@ -108,7 +109,10 @@ fun InnitScreen() {
 @Composable
 fun Step1() {
     val viewModel = viewModel<InnitRoomViewModel>()
-
+    val rentHouse = viewModel.rentHouse.collectAsStateWithLifecycle().value
+    var position = rememberSaveable {
+        mutableStateOf(0)
+    }
     OutlinedTextField(
         label = { Text("Ngày bắt đầu") },
         value = viewModel.time.collectAsStateWithLifecycle().value,
@@ -125,10 +129,16 @@ fun Step1() {
     )
 
     OutlinedTextField(label = { Text("Tiền thuê phòng") },
-        value = viewModel.rentHouse.collectAsStateWithLifecycle().value.formatToMoney(),
+        value = TextFieldValue(text = rentHouse.formatToMoney(),selection = TextRange(position.value)),
         onValueChange = {
-            if (it.isDigitsOrDot()) {
-                viewModel.rentHouse.value = it.replace(".","")
+            if (it.text == rentHouse.formatToMoney()) {
+                position.value = it.selection.end
+            } else {
+                position.value = rentHouse.formatToMoney().length
+            }
+
+            if (it.text.isDigitsOrDot()) {
+                viewModel.rentHouse.value = it.text.replace(".","")
             }
         },
         singleLine = true,
@@ -145,12 +155,14 @@ fun Step1() {
 @Composable
 fun Step2() {
     val viewModel = viewModel<InnitRoomViewModel>()
+    val rentElect = viewModel.rentElect.collectAsStateWithLifecycle().value
+    val rentWater = viewModel.rentWater.collectAsStateWithLifecycle().value
 
     OutlinedTextField(label = { Text("Giá điện") },
-        value = viewModel.rentElect.collectAsStateWithLifecycle().value.formatToMoney(),
+        value = TextFieldValue(text = rentElect.formatToMoney(),selection = TextRange(rentElect.formatToMoney().length)),
         onValueChange = {
-            if (it.isDigitsOrDot()) {
-                viewModel.rentElect.value = it.replace(".","")
+            if (it.text.isDigitsOrDot()) {
+                viewModel.rentElect.value = it.text.replace(".","")
             }
         },
         trailingIcon = { Text("VND") },
@@ -175,10 +187,10 @@ fun Step2() {
     )
 
     OutlinedTextField(label = { Text("Giá nước") },
-        value = viewModel.rentWater.collectAsStateWithLifecycle().value.formatToMoney(),
+        value = TextFieldValue(text = rentWater.formatToMoney(),selection = TextRange(rentWater.formatToMoney().length)),
         onValueChange = {
-            if (it.isDigitsOrDot()) {
-                viewModel.rentWater.value = it.replace(".","")
+            if (it.text.isDigitsOrDot()) {
+                viewModel.rentWater.value = it.text.replace(".","")
             }
         },
         trailingIcon = { Text("VND") },
@@ -209,18 +221,18 @@ fun Step2() {
 fun Step3() {
     val viewModel = viewModel<InnitRoomViewModel>()
 
-
     LazyColumn(horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(12.dp)) {
 
         items(viewModel.defaultSurcharges.size) { index ->
             val defaultSurcharge = viewModel.defaultSurcharges.get(index).collectAsStateWithLifecycle().value
+
             OutlinedTextField(label = { Text("${defaultSurcharge.name} ${index + 1}") },
-                value = defaultSurcharge.price.formatToMoney(),
+                value = TextFieldValue(text = defaultSurcharge.price.formatToMoney(),selection = TextRange(defaultSurcharge.price.formatToMoney().length)),
                 onValueChange = {
-                    if (it.isDigitsOrDot()) {
-                        if (it.isNotEmpty()) {
-                            viewModel.defaultSurcharges.get(index).value = DefaultSurcharge(price = it.replace(".","").toLong())
+                    if (it.text.isDigitsOrDot()) {
+                        if (it.text.isNotEmpty()) {
+                            viewModel.defaultSurcharges.get(index).value = DefaultSurcharge(price = it.text.replace(".","").toLong())
                         } else {
                             viewModel.defaultSurcharges.get(index).value = DefaultSurcharge(price = 0)
                         }
