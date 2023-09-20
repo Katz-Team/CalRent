@@ -129,14 +129,8 @@ fun Step1() {
     )
 
     OutlinedTextField(label = { Text("Tiền thuê phòng") },
-        value = TextFieldValue(text = rentHouse.formatToMoney(),selection = TextRange(position.value)),
+        value = TextFieldValue(text = rentHouse.formatToMoney(),selection = TextRange(rentHouse.formatToMoney().length)),
         onValueChange = {
-            if (it.text == rentHouse.formatToMoney()) {
-                position.value = it.selection.end
-            } else {
-                position.value = rentHouse.formatToMoney().length
-            }
-
             if (it.text.isDigitsOrDot()) {
                 viewModel.rentHouse.value = it.text.replace(".","")
             }
