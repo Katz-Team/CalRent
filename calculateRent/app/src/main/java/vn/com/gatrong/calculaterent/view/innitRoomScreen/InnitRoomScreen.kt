@@ -2,6 +2,7 @@ package vn.com.gatrong.calculaterent.view.innitRoomScreen
 
 import android.annotation.SuppressLint
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -23,6 +24,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -33,6 +35,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
@@ -151,7 +155,7 @@ fun Step2() {
     val viewModel = viewModel<InnitRoomViewModel>()
     val rentElect = viewModel.rentElect.collectAsStateWithLifecycle().value
     val rentWater = viewModel.rentWater.collectAsStateWithLifecycle().value
-
+    val context = LocalContext.current
     OutlinedTextField(label = { Text("Giá điện") },
         value = TextFieldValue(text = rentElect.formatToMoney(),selection = TextRange(rentElect.formatToMoney().length)),
         onValueChange = {
@@ -173,7 +177,18 @@ fun Step2() {
                 viewModel.kgElect.value = it
             }
         },
-        trailingIcon = { Text("Kwh") },
+        trailingIcon = {
+            IconButton(
+                onClick = {
+                Toast.makeText(context, "Bắt camera ở đây", Toast.LENGTH_LONG).show()
+                }
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.camera_24),
+                    contentDescription = "camera"
+                )
+            }
+        },
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Decimal,
             imeAction = ImeAction.Next
