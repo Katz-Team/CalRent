@@ -41,39 +41,20 @@ G --> H((Gửi tiền))
 
 ```mermaid
   graph TD
-    subgraph "Người thuê trọ"
-        UT1[Tạo yêu cầu mới]
-        UT2[Nhập thông số đo điện nước]
-        UT3[Nhận thông báo về hạn đóng tiền]
-        UT4[Xem lịch sử yêu cầu]
-        UT5[Xem thông tin cá nhân]
+    subgraph UT["Actor: Người thuê trọ"]
     end
 
-    subgraph "Hệ thống"
-        SS1[Lưu trữ lịch sử và các thông tin từ người thuê trọ]
-        SS2[Quản lý thông tin về người thuê trọ và chủ trọ]
+    subgraph "Hệ thống CalRent"
+        SS0["Tính tiền trọ mỗi tháng"]
+        SS1["Quản lý tiền trọ"]
+        SS2["Thông báo ngày hạn tính tiền"]
     end
 
-    UT1 -->|Tạo yêu cầu| SS1
-    UT2 -->|Nhập thông số| SS1
-    UT3 -->|Nhận thông báo| SS1
-    UT4 -->|Xem lịch sử yêu cầu| SS1
-    UT5 -->|Xem thông tin cá nhân| SS2
+    UT -->|Thêm/Xoá/Sửa Tiền trọ tháng| SS1
+    UT -->|Xem lịch sử yêu cầu| SS1
+    UT -->|Nhận thông báo| SS2
+    UT --> |Tính tiền| SS0
 ```
-
-**Use Case Diagram cho ứng dụng calRent:**
-
-- **Người thuê trọ**:
-    - Tạo yêu cầu mới (Tính tiền trọ cho một tháng cụ thể)
-    - Nhập thông số đo điện nước
-    - Nhận thông báo về hạn đóng tiền
-    - Xem lịch sử yêu cầu
-    - Xem thông tin cá nhân
-
-- **Hệ thống**:
-    - Lưu trữ lịch sử các yêu cầu từ người thuê trọ
-    - Quản lý thông tin về người thuê trọ và chủ trọ
-    - Tạo báo cáo thống kê
 
 ### Architectural Models
 
@@ -102,53 +83,42 @@ graph TD
 ### Data Modeling
 
 ```mermaid
-classDiagram
-  class BillEntity {
-    - id: Long
-    - moneyRent: Long
-    - preElectric: Int
-    - newElectric: Int
-    - priceElectric: Int
-    - preWater: Int
-    - newWater: Int
-    - priceWater: Int
-    - timeFrom: Long
-    - timeTo: Long
-    + BillEntity()
-    + BillEntity(bill: Bill)
-    + toBill(): Bill
-  }
-  class DefaultSettingEntity {
-    - id: Long
-    - timeNotification: Long
-    - rentHouse: Long
-    - rentElect: Long
-    - rentWater: Long
-    + DefaultSettingEntity()
-    + DefaultSettingEntity(defaultSetting: DefaultSetting)
-    + toDefaultSetting(): DefaultSetting
-  }
-  class DefaultSurchargeEntity {
-    - id: Long
-    - idSetting: Long
-    - name: String
-    - price: Long
-    + DefaultSurchargeEntity(idSetting: Long)
-    + DefaultSurchargeEntity(defaultSurcharge: DefaultSurcharge, idSetting: Long)
-    + toDefaultSurcharge(): DefaultSurcharge
-  }
-  class SurchargeEntity {
-    - id: Long
-    - idBill: Long
-    - name: String
-    - price: Int
-    + SurchargeEntity(idBill: Long)
-    + SurchargeEntity(surcharge: Surcharge, idBill: Long)
-    + toSurcharge(): Surcharge
-  }
+erDiagram
+    BillEntity {
+    id Long
+    moneyRent Long
+    preElectric Int
+    newElectric Int
+    priceElectric Int
+    preWater Int
+    newWater Int
+    priceWater Int
+    timeFrom Long
+    timeTo Long
+}
+    DefaultSettingEntity {
+    id Long
+    timeNotification Long
+    rentHouse Long
+    rentElect Long
+    rentWater Long
+}
+    DefaultSurchargeEntity {
+    id Long
+    idSetting Long
+    name String
+    price Long
+}
+    SurchargeEntity {
+    id Long
+    idBill Long
+    name String
+    price Int
+}
 
-BillEntity --> SurchargeEntity
-DefaultSettingEntity --> DefaultSurchargeEntity
+BillEntity ||--|{ SurchargeEntity: idBill
+DefaultSettingEntity ||--|{ DefaultSurchargeEntity: idSetting
+
 ```
 
 ### Sequence Diagram
