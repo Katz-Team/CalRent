@@ -8,7 +8,7 @@ Welcome to the CalRent wiki!
 
 ```mermaid
 graph LR
-A((Bắt đầu)) --> B(Kiểm tra xem tới hạng tiền nhà chưa)
+A((Bắt đầu)) --> B{Tới hạng tiền nhà chưa}
 B --> |Chưa| C(Không làm gì cả)
 B --> |Có| D(Bắt đầu tính tiền nhà)
 D --> E(Chụp công tơ điện)
@@ -16,20 +16,20 @@ D --> F(Chụp đồng hồ nước)
 E --> G(Tính tiền điện nước -> tiền nhà)
 F --> G
 G --> H(Gửi hình ảnh tính toán, công tơ điện nước cho chủ trọ)
-H --> I(Gửi tiền)
+H --> I((Gửi tiền))
 ```
 
 - Tính tiền nhà dùng app.
 ```mermaid
 graph LR
 A((Bắt đầu)) --> B("Ứng dụng gửi thông báo (Tự động)")
-B --> |Tới ngày| C("Chụp công tơ điện -> lấy số khối điện (Tự động)")
-B --> |Tới ngày| D("Chụp đồng hồ nước -> lấy số khối nước (Tự động)")
+B --> |Tới ngày| C("Chụp công tơ điện")
+B --> |Tới ngày| D("Chụp đồng hồ nước")
 D --> E("Tính tiền điện nước (Tự động) -> tiền nhà (Tự động)")
 C --> E
 E --> F("Hiện bill chi tiết các thông tin (Tự động)")
 F --> G(Chụp hình gửi chủ trọ)
-G --> H(Gửi tiền)
+G --> H((Gửi tiền))
 ```
 
 ## User Requests
