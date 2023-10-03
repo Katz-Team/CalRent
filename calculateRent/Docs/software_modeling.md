@@ -132,25 +132,26 @@ G --> H((Gửi tiền))
 ### User Story Map
 
 
-| Tính tiền điện nước            | Quản lý tiền trọ                      | Thông báo ngày tính tiền     | Khởi tạo mặc định           |
-|--------------------------------|---------------------------------------|------------------------------|-----------------------------|
-| Ghi nhận tiêu thụ điện nước    | Xem Lịch sử thanh toán tiền trọ       | Thông báo đến hạn thanh toán | Ghi nhận thông tin thủ công |
-| Lưu kết quả tính toán          | Xóa lịch sử thanh toán đã chọn        | Tắt/Bật thông báo            |                             |
-| Nhập điện nước qua hình ảnh    | Chỉnh sửa thông tin tiền trọ đã chọn  |                              |                             |
-| Nhập điện nước từ hình hóa đơn | Chỉnh sửa thông tin mặc định tiền trọ |                              |                             |
+| Tính tiền điện nước                | Quản lý tiền trọ                           | Thông báo ngày tính tiền         | Khởi tạo mặc định               |
+|------------------------------------|--------------------------------------------|----------------------------------|---------------------------------|
+| Ghi nhận tiêu thụ điện nước (1)    | Xem Lịch sử thanh toán tiền trọ (1)        | Thông báo đến hạn thanh toán (1) | Ghi nhận thông tin thủ công (1) |
+| Lưu kết quả tính toán        (1)   | Xóa lịch sử thanh toán đã chọn (1)         | Tắt/Bật thông báo  (2)           |                                 |
+| Nhập điện nước qua hình ảnh    (1) | Chỉnh sửa thông tin tiền trọ đã chọn (1)   |                                  |                                 |
+| Nhập điện nước từ hình hóa đơn (2) | Chỉnh sửa thông tin mặc định tiền trọ  (1) |                                  |                                 |
+
+```
+Lưu ý:
+
+(1): Sẽ release vào version 1
+
+(2): Sẽ release vào version 2
+```
 
 ### User Story Description For MVP
 
-| Tiêu đề: Lưu kết quả tính toán   |
-|----------------------------------|
-| User story:                      |
-| System provide:                  |
-
-
-
-| Tiêu đề: Ghi nhận điện nước tiêu thụ thủ công                                                                                                                                                                                                                                                                           |
-|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| User story: Người dùng muốn có khả năng ghi nhận tiêu thụ điện nước hàng tháng bằng cách nhập thủ công các chỉ số đo điện và nước vào ứng dụng di động của họ.                                                                                                                                                                        |
+| Tiêu đề: Ghi nhận điện nước tiêu thụ thủ công                                                                                                                                                                                                                                                                                          |
+|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| User story: Người dùng muốn có khả năng ghi nhận tiêu thụ điện nước hàng tháng bằng cách nhập thủ công các chỉ số đo điện và nước vào ứng dụng di động của họ.                                                                                                                                                                         |
 | System provide: Hệ thống cung cấp giao diện cho phép người dùng nhập các chỉ số đo điện và nước một cách dễ dàng. Sau khi người dùng nhập các thông số này, hệ thống sẽ tính toán tự động số tiền phải đóng dựa trên giá tiền đã được định sẵn. Kết quả tính toán sẽ được hiển thị trên giao diện để người dùng xem trước và xác nhận. |
 
 
