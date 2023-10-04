@@ -166,11 +166,6 @@ Lưu ý:
 | User story: Người dùng muốn có khả năng nhập thông số đo điện và nước thông qua hình ảnh để tiết kiệm thời gian và công sức.                                                                                                                                                                                                                                                                                                    |
 | System provide: Hệ thống cung cấp tính năng cho phép người dùng chụp hình ảnh hoặc tải lên hình ảnh của đồng hồ điện và nước. Hệ thống sẽ tự động phân tích hình ảnh để trích xuất thông tin về các con số đo điện và nước. Sau đó, thông tin này sẽ được nhập tự động vào ứng dụng để tiến hành tính toán tiền trọ. Điều này giúp người dùng dễ dàng và nhanh chóng cập nhật thông tin mà không cần phải nhập tay từng con số. |
 
-| Tiêu đề: Nhập điện nước từ hình hóa đơn                                                                                                                                                                                                                                                                                                                                                                             |
-|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| User story: Người dùng muốn có khả năng nhập thông số đo điện và nước từ hình ảnh của hóa đơn tiền điện và nước mà họ đã nhận được từ công ty cung cấp dịch vụ.                                                                                                                                                                                                                                                     |
-| System provide: Hệ thống cung cấp tính năng cho phép người dùng tải lên hình ảnh của hóa đơn tiền điện và nước. Hệ thống sẽ tự động phân tích hình ảnh để trích xuất thông tin về các con số đo điện và nước từ hóa đơn. Sau đó, thông tin này sẽ được nhập tự động vào ứng dụng để tiến hành tính toán tiền trọ. Điều này giúp người dùng dễ dàng và nhanh chóng cập nhật thông tin từ hóa đơn mà họ đã nhận được. |
-
 | Tiêu đề: Ghi nhận thông tin thủ công                                                                                                                                                                                                                                                                                                                                                                    |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | User story: Người dùng muốn có khả năng ghi nhận thông tin mặc định của phòng trọ thủ công, bao gồm tiền thuê, tiền nước, khối điện ban đầu, khối nước ban đầu và các phí phụ thu                                                                                                                                                                                                                       |
@@ -351,51 +346,53 @@ sequenceDiagram
     end
 ```
 
-#### Calculator New Rent Month
+#### 2. Ghi nhận điện nước tiêu thụ thủ công
 
 ```mermaid
-graph TD
-  subgraph Start
-    A[Cho phép người dùng nhập khối nước, khối điện tháng này]
-  end
+sequenceDiagram
+    actor User
+    participant FeedScreen
+    participant CalScreen
+    participant BillScreen
+    participant CalViewModel
+    participant BillViewModel
+    participant DatabaseUseCase
+    participant Repository
+    participant Room
+    
+    User ->> FeedScreen: Chọn chức năng tính tiền điện
+    FeedScreen ->> CalScreen: Chuyển màn hình
+    User ->> CalScreen: Nhập khối điện, khối nước
+    User ->> CalScreen: Chọn Tính tiền
+    CalScreen ->> CalViewModel: getLastBillTemp(): Bill
+    CalViewModel ->> DatabaseUseCase: getLastBillTemp(kgElect,kgWater,Time) : Bill
+    
+    DatabaseUseCase ->> Repository: getDefaultSetting: DefaultSetting
+    Repository ->> Room: getAllDefaultSetting(): List<DefaultSettingEntity> 
+    Room -->> Repository: return List<DefaultSettingEntity> -> get first
+    Repository ->> Repository: convertEntityToObject(): DefaultSetting
+    Repository -->> DatabaseUseCase: return DefaultSetting
 
-  subgraph havePreMonth[Có Dữ Liệu Tháng Trước]
-    B[Tải dữ liệu tháng trước]
-    A -->|Có dữ liệu| B
-  end
-
-  subgraph haveDefault[Có Dữ Liệu Mặc Định]
-    C[Tải dữ liệu mặc định]
-    B -->|Có dữ liệu| C
-  end
-
-  subgraph Tính Toán Tiền Nước và Điện
-    D[Lấy hiệu khối lượng nước và điện của tháng trước và mới nhập]
-    E[Lấy tiền điện/nước của dữ liệu mặc định]
-    D --> F[Thực hiện tính toán tiền điện/nước]
-    E --> F
-  end
-
-  subgraph Hiển Thị Kết Quả
-    F --> G[Show lên UI]
-  end
-
-  subgraph Lưu Vào Database
-    G --> H[Lưu vào database]
-  end
-
-  subgraph haveboth[Có cả hai]
-  
-  end
-
-  subgraph justOne[Chỉ có một]
-
-  end
-
-  havePreMonth --> haveboth
-  haveDefault --> haveboth
-  haveboth --> D
-
-  haveDefault --> justOne
-  justOne --> E
+    DatabaseUseCase ->> Repository: getBillLast: Bill
+    Repository ->> Room: getAllBill(): List<BillEntity>
+    Room -->> Repository: return List<BillEntity> -> get last BillEntity
+    Repository ->> Repository: convertEntityToObject(): Bill
+    Repository -->> DatabaseUseCase: return Bill
+    DatabaseUseCase ->> DatabaseUseCase: merge Bill and DefaultSetting
+    DatabaseUseCase -->> CalViewModel: return Bill
+    CalViewModel -->> CalScreen: return Bill
+    
+    
+    CalScreen ->> BillScreen: Chuyển màn hình kèm data Bill
+    
+    BillScreen ->> BillScreen: getTotalMoney()
+    
+    User ->> BillScreen: Chọn Hoàn tất
+    BillScreen ->> BillViewModel: insertBill(bill)
+    BillViewModel ->> DatabaseUseCase: insertBill(bill)
+    DatabaseUseCase ->> Repository: insertBill(bill)
+    Repository ->> Room: insertBill(billEntity)
+    Repository ->> Room: insertSurcharge(surchargeEntity)
+    
+    BillScreen ->> FeedScreen: Chuyển về
 ```
