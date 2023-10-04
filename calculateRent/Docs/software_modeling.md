@@ -55,9 +55,10 @@ G --> H((Gửi tiền))
 
     UT -->|Xoá/Sửa Tiền trọ tháng| SS1
     UT -->|Xem lịch sử yêu cầu| SS1
-    UT -->|Nhận thông báo| SS2
-    UT --> |Tính tiền & Thêm tiền trọ| SS0
+    UT --> |Tính tiền | SS0
     SS0 --> | Không có tháng trước | SS3
+    SS0 --> | Lưu tiền trọ | SS1
+    UT -->|Nhận thông báo| SS2
 ```
 
 #### List of use case
@@ -132,12 +133,13 @@ G --> H((Gửi tiền))
 ### User Story Map
 
 
-| Tính tiền điện nước                | Quản lý tiền trọ                           | Thông báo ngày tính tiền         | Khởi tạo mặc định               |
-|------------------------------------|--------------------------------------------|----------------------------------|---------------------------------|
-| Ghi nhận tiêu thụ điện nước (1)    | Xem Lịch sử thanh toán tiền trọ (1)        | Thông báo đến hạn thanh toán (1) | Ghi nhận thông tin thủ công (1) |
-| Lưu kết quả tính toán        (1)   | Xóa lịch sử thanh toán đã chọn (1)         | Tắt/Bật thông báo  (2)           |                                 |
-| Nhập điện nước qua hình ảnh    (1) | Chỉnh sửa thông tin tiền trọ đã chọn (1)   |                                  |                                 |
-| Nhập điện nước từ hình hóa đơn (2) | Chỉnh sửa thông tin mặc định tiền trọ  (1) |                                  |                                 |
+| Tính tiền điện nước                 | Quản lý tiền trọ                           | Thông báo ngày tính tiền         | Khởi tạo mặc định               |
+|-------------------------------------|--------------------------------------------|----------------------------------|---------------------------------|
+| Ghi nhận tiêu thụ điện nước (1)     | Xem Lịch sử thanh toán tiền trọ (1)        | Thông báo đến hạn thanh toán (1) | Ghi nhận thông tin thủ công (1) |
+| Nhập điện nước qua hình ảnh    (1)  | Xóa lịch sử thanh toán đã chọn (1)         | Tắt/Bật thông báo  (2)           |                                 |
+| Nhập điện nước từ hình hóa đơn (2)  | Chỉnh sửa thông tin tiền trọ đã chọn (1)   |                                  |                                 |
+|                                     | Chỉnh sửa thông tin mặc định tiền trọ  (1) |                                  |                                 |
+|                                     | Lưu thanh toán tiền trọ mới (1)            |                                  |                                 |
 
 ```
 Lưu ý:
@@ -154,23 +156,50 @@ Lưu ý:
 | User story: Người dùng muốn có khả năng ghi nhận tiêu thụ điện nước hàng tháng bằng cách nhập thủ công các chỉ số đo điện và nước vào ứng dụng di động của họ.                                                                                                                                                                         |
 | System provide: Hệ thống cung cấp giao diện cho phép người dùng nhập các chỉ số đo điện và nước một cách dễ dàng. Sau khi người dùng nhập các thông số này, hệ thống sẽ tính toán tự động số tiền phải đóng dựa trên giá tiền đã được định sẵn. Kết quả tính toán sẽ được hiển thị trên giao diện để người dùng xem trước và xác nhận. |
 
-
-| Tiêu đề: Lưu kết quả tính toán                                                                                                                                                                                                                                                                               |
+| Tiêu đề: Lưu thanh toán tiền trọ mới                                                                                                                                                                                                                                                                         |
 |--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | User story: Người dùng muốn có khả năng lưu trữ kết quả tính toán tiền trọ sau khi đã nhập thông số đo điện và nước vào ứng dụng di động.                                                                                                                                                                    |
 | System provide: Hệ thống cung cấp tính năng lưu trữ kết quả tính toán, bao gồm thông tin về số tiền cần đóng, tháng tính tiền, và các thông số đo điện và nước tương ứng. Kết quả tính toán sẽ được lưu trữ trong cơ sở dữ liệu của ứng dụng để người dùng có thể xem lại và theo dõi lịch sử tính tiền trọ. |
-
 
 | Tiêu đề: Nhập điện nước qua hình ảnh                                                                                                                                                                                                                                                                                                                                                                                            |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | User story: Người dùng muốn có khả năng nhập thông số đo điện và nước thông qua hình ảnh để tiết kiệm thời gian và công sức.                                                                                                                                                                                                                                                                                                    |
 | System provide: Hệ thống cung cấp tính năng cho phép người dùng chụp hình ảnh hoặc tải lên hình ảnh của đồng hồ điện và nước. Hệ thống sẽ tự động phân tích hình ảnh để trích xuất thông tin về các con số đo điện và nước. Sau đó, thông tin này sẽ được nhập tự động vào ứng dụng để tiến hành tính toán tiền trọ. Điều này giúp người dùng dễ dàng và nhanh chóng cập nhật thông tin mà không cần phải nhập tay từng con số. |
 
-
 | Tiêu đề: Nhập điện nước từ hình hóa đơn                                                                                                                                                                                                                                                                                                                                                                             |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | User story: Người dùng muốn có khả năng nhập thông số đo điện và nước từ hình ảnh của hóa đơn tiền điện và nước mà họ đã nhận được từ công ty cung cấp dịch vụ.                                                                                                                                                                                                                                                     |
 | System provide: Hệ thống cung cấp tính năng cho phép người dùng tải lên hình ảnh của hóa đơn tiền điện và nước. Hệ thống sẽ tự động phân tích hình ảnh để trích xuất thông tin về các con số đo điện và nước từ hóa đơn. Sau đó, thông tin này sẽ được nhập tự động vào ứng dụng để tiến hành tính toán tiền trọ. Điều này giúp người dùng dễ dàng và nhanh chóng cập nhật thông tin từ hóa đơn mà họ đã nhận được. |
+
+| Tiêu đề: Ghi nhận thông tin thủ công                                                                                                                                                                                                                                                                                                                                                                    |
+|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| User story: Người dùng muốn có khả năng ghi nhận thông tin mặc định của phòng trọ thủ công, bao gồm tiền thuê, tiền nước, khối điện ban đầu, khối nước ban đầu và các phí phụ thu                                                                                                                                                                                                                       |
+| System provide: Hệ thống cung cấp khả năng cho người thuê trọ ghi nhận và cập nhật thông tin mặc định của phòng trọ thủ công thông qua ứng dụng di động. Điều này bao gồm nhập số tiền thuê, khối nước, khối điện ban đầu và các phí phụ thu một cách thủ công. Sau khi tôi đã nhập thông tin này, hệ thống sẽ lưu chúng vào cơ sở dữ liệu để sử dụng cho việc tính toán tiền trọ và quản lý phòng trọ. |
+
+| Tiêu đề: Xem Lịch sử thanh toán tiền trọ                                                                                                                                                                                                                                                                                                                                              |
+|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| User story: Người dùng muốn có khả năng xem lịch sử thanh toán tiền trọ để theo dõi các khoản thanh toán trước đây và kiểm tra tính đúng đắn của các khoản thanh toán đó.                                                                                                                                                                                                             |
+| System provide: Hệ thống cung cấp khả năng cho người thuê trọ, để xem lịch sử thanh toán tiền trọ thông qua ứng dụng di động. Điều này bao gồm việc hiển thị danh sách các khoản thanh toán trước đây bao gồm thông tin về tháng, số tiền. Tôi có thể dễ dàng xem thông tin chi tiết về từng khoản thanh toán bằng cách chọn vào một khoản cụ thể trong danh sách lịch sử thanh toán. |
+
+| Tiêu đề: Xóa lịch sử thanh toán đã chọn                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| User story:  Như một người dùng của ứng dụng, tôi muốn có khả năng xóa các bản ghi lịch sử thanh toán đã chọn để tôi có thể quản lý lịch sử thanh toán một cách hiệu quả hơn. Khi tôi chọn một bản ghi lịch sử thanh toán cụ thể và yêu cầu xóa nó, hệ thống sẽ xác nhận yêu cầu của tôi và sau đó xóa bản ghi đó khỏi danh sách lịch sử thanh toán.                                                                                                                                                                                                                                             |
+| System provide: Hệ thống hiển thị danh sách các bản ghi lịch sử thanh toán có sẵn cho người dùng. Người dùng có thể chọn một hoặc nhiều bản ghi lịch sử thanh toán để xóa. Hệ thống xác nhận với người dùng xem họ có chắc chắn muốn xóa các bản ghi đã chọn không. Nếu người dùng xác nhận, hệ thống sẽ xóa các bản ghi đã chọn khỏi danh sách lịch sử thanh toán. Hệ thống cung cấp thông báo xóa thành công cho người dùng. Nếu người dùng không xác nhận xóa hoặc hủy bỏ thao tác xóa, hệ thống quay lại danh sách lịch sử thanh toán mà không thực hiện xóa. |
+
+| Tiêu đề: Chỉnh sửa thông tin tiền trọ đã chọn                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| User story: Như một người dùng của ứng dụng, tôi muốn có khả năng chỉnh sửa thông tin về tiền trọ đã được ghi nhận để cập nhật và điều chỉnh thông tin liên quan đến tiền trọ. Khi tôi chọn chỉnh sửa, tôi sẽ có thể thay đổi số tiền, ngày thanh toán, và các chi tiết liên quan đến tiền trọ. Hệ thống sẽ cập nhật thông tin này vào cơ sở dữ liệu sau khi tôi hoàn tất chỉnh sửa.                                                                                                                                                                                                                                                                                                                      |
+| System provide: Hệ thống cung cấp giao diện cho người dùng để xem và chỉnh sửa thông tin tiền trọ đã ghi nhận trước đó. Người dùng chọn thông tin tiền trọ cần chỉnh sửa từ danh sách. Hệ thống hiển thị thông tin tiền trọ đang chọn và cho phép người dùng chỉnh sửa số tiền, ngày thanh toán, và các chi tiết liên quan đến tiền trọ. Người dùng cập nhật thông tin và chấp nhận chỉnh sửa. Hệ thống kiểm tra và xác nhận thông tin cập nhật từ người dùng. Nếu thông tin hợp lệ, hệ thống cập nhật thông tin tiền trọ trong cơ sở dữ liệu và hiển thị thông báo xác nhận cho người dùng. Nếu thông tin không hợp lệ, hệ thống cung cấp thông báo lỗi cho người dùng và yêu cầu họ nhập lại thông tin. |
+
+| Tiêu đề: Chỉnh sửa thông tin mặc định tiền trọ                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| User story: Như một người dùng của ứng dụng, tôi muốn có khả năng chỉnh sửa thông tin mặc định về tiền trọ để cập nhật và điều chỉnh các giá trị tiền thuê, tiền nước, khối điện ban đầu, khối nước ban đầu và các phí phụ thu một cách dễ dàng. Khi tôi cần thay đổi các giá trị này, tôi sẽ có thể thực hiện tại giao diện chỉnh sửa thông tin mặc định. Hệ thống sẽ lưu lại các thay đổi này vào cơ sở dữ liệu để áp dụng cho tính toán tiền trọ và quản lý phòng trọ.                                                                                                   |
+| System provide: Hệ thống cung cấp giao diện cho người dùng để xem và chỉnh sửa thông tin mặc định về tiền trọ. Người dùng có thể thay đổi giá trị tiền thuê, tiền nước, khối điện ban đầu, khối nước ban đầu và các phí phụ thu theo nhu cầu của họ. Hệ thống kiểm tra và xác nhận thông tin cập nhật từ người dùng. Nếu thông tin hợp lệ, hệ thống cập nhật thông tin mặc định về tiền trọ trong cơ sở dữ liệu và hiển thị thông báo xác nhận cho người dùng. Nếu thông tin không hợp lệ, hệ thống cung cấp thông báo lỗi cho người dùng và yêu cầu họ nhập lại thông tin. | 
+
+| Tiêu đề: Thông báo đến hạn thanh toán                                                                                                                                                                                                                                                                                                                                       |
+|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| User story: Như một người dùng của ứng dụng, tôi muốn nhận được thông báo nhắc nhở đến ngày đến hạn thanh toán tiền trọ. Ứng dụng sẽ tự động gửi thông báo nhắc nhở cho tôi trước ngày đó để tôi không quên việc thanh toán tiền trọ vào ngày hợp lệ. Điều này giúp tôi duy trì việc thanh toán kịp thời và tránh các rủi ro liên quan đến việc không đóng tiền đúng hạn.   |
+| System provide: Hệ thống sẽ xác định ngày đến hạn thanh toán dựa trên thông tin trong cơ sở dữ liệu. Hệ thống sẽ tự động gửi thông báo nhắc nhở cho người dùng trước ngày đến hạn (ví dụ: 3 ngày trước). Người dùng sẽ nhận thông báo và có thể xem thông tin chi tiết về việc tính toán tiền trọ nếu cần. Nếu người dùng không xem thông tin chi tiết, quy trình kết thúc. | 
 
 ### User
 
@@ -246,28 +275,83 @@ DefaultSettingEntity ||--|{ DefaultSurchargeEntity: idSetting
 
 ### Sequence Diagram
 
-### Innit Flow
+#### 1. Flow Ghi nhận thông tin thủ công
 
 ```mermaid
-graph TD
-  subgraph Start
-    A[Kiểm tra xem các chỉ số mặc định, điện, nước, tiền nhà, điện nước đã có chưa]
-  end
-
-  subgraph Có Dữ Liệu Mặc Định
-    B[Chuyển đến luồng tính tiền nhà]
-    A -->|Có dữ liệu| B
-  end
-
-  subgraph Không Có Dữ Liệu Mặc Định
-    A -->|Không có dữ liệu| D[Bắt người dùng nhập: Thời gian, Tiền Nhà]
-    D --> E[Nhập tiếp khối điện khởi điểm, khối nước khởi điểm, giá nước, giá điện]
-    E --> F[Nhập tiếp các phụ wifi, rác,...]
-    F --> G[Chuyển đến luồng tính tiền nhà]
-  end
+sequenceDiagram
+    actor User
+    participant ScreenInnit
+    participant ScreenStep1
+    participant ScreenStep2
+    participant ScreenStep3
+    participant ViewModelInnit
+    participant UseCaseInnit
+    participant Repository
+    participant Room
+    
+    User ->> ScreenInnit: Open App
+    ScreenInnit ->> ViewModelInnit: haveDefaultSetting(): Boolean
+    ViewModelInnit ->> UseCaseInnit: haveDefaultSetting() : Boolean
+    UseCaseInnit ->> Repository: getDefaultSetting(): DefaultSetting
+    Repository ->> Room: getDefaultSettingEntity(): DefaultSettingEntity
+    
+    Room -->> Repository: DefaultSettingEntity?
+    Repository ->> Repository: convertEntityToObject(): DefaultSetting?
+    Repository -->> UseCaseInnit: DefaultSetting?
+    
+    alt DefaultSetting không null 
+        UseCaseInnit -->> ViewModelInnit: True
+        ViewModelInnit -->> ScreenInnit: True
+        ScreenInnit ->> ViewModelInnit: Chuyển sang Quản lý tiền trọ UC-002
+    else DefaultSetting thì null
+        UseCaseInnit -->> ViewModelInnit: False
+        ViewModelInnit -->> ScreenInnit: False
+        ScreenInnit ->> ScreenStep1: Hiện Step1
+        loop 
+            User ->> ScreenStep1: Nhập tiền nhà, ngày đóng trọ
+            User ->> ScreenStep1: Chọn tiếp tục
+            ScreenStep1 ->> ViewModelInnit: checkValueInvalid: Boolean()
+            alt valid
+                ViewModelInnit -->> ScreenStep1: True
+                ScreenStep1 -->> ScreenInnit: Hiện Step 2
+                ScreenInnit ->> ScreenStep2: Hiện Step 2
+                User ->> ScreenStep2: Nhập tiền điện nước, mốc khởi điểm điện nước
+                User ->> ScreenStep2: Chọn tiếp tục
+                ScreenStep2 ->> ViewModelInnit: checkValueInvalid: Boolean()
+                alt valid
+                    ViewModelInnit -->> ScreenStep2: True
+                    ScreenStep2 -->> ScreenInnit: Hiện Step 3
+                    ScreenInnit ->> ScreenStep3: Hiện Step 3
+                    User ->> ScreenStep3: Nhập phụ phí
+                    User ->> ScreenStep3: Chọn tiếp tục
+                    ScreenStep3 ->> ViewModelInnit: checkValueInvalid: Boolean()
+                    alt valid
+                        ViewModelInnit -->> ScreenStep3: True
+                        ScreenStep3 ->> ScreenInnit: Chuyển sang step mới
+                        ScreenInnit ->> ViewModelInnit: insertDefaultSetting(default)
+                        ViewModelInnit ->> UseCaseInnit: insertDefaultSetting(default)
+                        UseCaseInnit ->> Repository: insertDefaultSetting(default)
+                        Repository ->> Repository: convertObjectToEntity(): DefaultSettingEntity?
+                        Repository ->> Room: insertDefaultSettingEntity(defaultEntity)
+                        Repository ->> Room: insertDefaultSurchargeEntity(defaultSubEntity)
+                        ScreenInnit ->> ViewModelInnit: Chuyển sang Quản lý tiền trọ UC-002
+                    else invalid
+                        ViewModelInnit -->> ScreenStep3: False
+                        ScreenStep3 ->> ScreenStep3: Thông báo lỗi, nhập lại
+                    end
+                else invalid
+                    ViewModelInnit -->> ScreenStep2: False
+                    ScreenStep2 ->> ScreenStep2: Thông báo lỗi, nhập lại
+                end
+            else invalid
+                ViewModelInnit -->> ScreenStep1: False
+                ScreenStep1 ->> ScreenStep1: Thông báo lỗi, nhập lại
+            end
+        end
+    end
 ```
 
-### Calculator New Rent Month
+#### Calculator New Rent Month
 
 ```mermaid
 graph TD
