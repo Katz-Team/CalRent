@@ -396,3 +396,248 @@ sequenceDiagram
     
     BillScreen ->> FeedScreen: Chuyển về
 ```
+
+#### 3. Xóa lịch sử thanh toán đã chọn
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant FeedScreen
+    participant FeedViewModel
+    participant DatabaseUseCase
+    participant Repository
+    participant Room
+    
+    User ->> FeedScreen: Chọn Edit Model
+    FeedScreen ->> FeedScreen: Chuyển sang Edit Model
+    User ->> FeedScreen: Chọn Item muốn xóa
+    User ->> FeedScreen: Chọn xóa
+    FeedScreen -->> User: Xác thực muốn xóa
+    
+    alt name
+        User ->> FeedScreen: Xác Nhận
+        FeedScreen ->> FeedViewModel: deleteBill(bill)
+        FeedViewModel ->> DatabaseUseCase: removeBill(bill)
+        DatabaseUseCase ->> Repository: removeBill(bill)
+        Repository ->> Room: deleteSurcharge(SurchargeEntity)
+        Repository ->> Room: deleteBill(BillEntity)
+    else
+        User ->> FeedScreen: Hủy Bỏ
+    end
+```
+
+#### 4. Xem Lịch sử thanh toán tiền trọ
+
+```mermaid
+sequenceDiagram
+    participant FeedScreen
+    participant FeedViewModel
+    participant DatabaseUseCase
+    participant Repository
+    participant Room
+    
+    FeedViewModel ->> DatabaseUseCase: getFlowBills: Flow<List<Bill>>
+    DatabaseUseCase ->> Repository: getFlowBills: Flow<List<Bill>>
+    Repository ->> Room: loadBillAndSurcharge: Flow<Map<BillEntity, List<SurchargeEntity>>>
+    Room -->> Repository: return Flow<Map<BillEntity, List<SurchargeEntity>>>
+    Repository -->> DatabaseUseCase: return Flow<List<Bill>>
+    DatabaseUseCase -->> FeedViewModel: Flow<List<Bill>>
+    
+    FeedScreen ->> FeedViewModel: getRoom() : StateFlow<List<Bill>>
+    FeedViewModel -->> FeedScreen: StateFlow<List<Bill>>
+```
+
+#### 5. Lưu thanh toán tiền trọ mới
+
+```mermaid
+sequenceDiagram
+    participant DatabaseUseCase
+    participant Repository
+    participant Room
+    
+    
+    DatabaseUseCase ->> Repository: insertBill(bill)
+    Repository ->> Room: insertBill(BillEntity)
+    Repository ->> Room: insertSurcharge(SurchargeEntity)
+```
+
+#### 6. Chỉnh sửa thông tin tiền trọ đã chọn
+```mermaid
+sequenceDiagram
+    actor User
+    participant FeedScreen
+    participant BillScreen
+    participant BillViewModel
+    participant DatabaseUseCase
+    participant Repository
+    participant Room
+    
+    User ->> FeedScreen: Chọn tiền trọ muốn chỉnh sửa
+    FeedScreen ->> BillScreen: Chuyển màn hình kèm data Bill
+    User ->> BillScreen: Chọn Edit Mode
+    User ->> BillScreen: Sửa đổi các thông tin
+    User ->> BillScreen: Chọn lưu
+    BillScreen ->> BillViewModel: updateBill(bill)
+    BillViewModel ->> DatabaseUseCase: updateBill(bill)
+    DatabaseUseCase ->> Repository: updateBill(bill)
+    Repository ->> Room: updateBillEntity(BillEntity)
+    Repository ->> Room: updateSurchargeEntity(BillEntity)
+```
+
+
+#### 7. Chỉnh sửa thông tin mặc định tiền trọ
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant FeedScreen
+    participant DefaultSettingScreen
+    participant DefaultSettingViewModel
+    participant DatabaseUseCase
+    participant Repository
+    participant Room
+    
+    User ->> FeedScreen: Chọn Chỉnh Sửa Default
+    FeedScreen ->> DefaultSettingScreen: Chuyển màn hình
+    DefaultSettingScreen ->> DefaultSettingViewModel: getDefaultSetting(): DefaultSetting
+    DefaultSettingViewModel ->> DatabaseUseCase: getDefaultSetting(): DefaultSetting
+    DatabaseUseCase ->> Repository: getDefaultSetting(): DefaultSetting
+    Repository ->> Room: getDefaultSettingEntity(): DefaultSettingEntity
+    Repository ->> Room: getDefaultSettingEntity(): DefaultSurchargeEntity
+    
+    Room -->> Repository: return DefaultSettingEntity
+    Repository -->> DatabaseUseCase: return DefaultSetting
+    DatabaseUseCase -->> DefaultSettingViewModel: return DefaultSetting
+    DefaultSettingViewModel -->> DefaultSettingScreen: return DefaultSetting
+    
+    User ->> DefaultSettingScreen: Thay đổi thông tin
+    DefaultSettingScreen ->> DefaultSettingViewModel: updateDefaultSetting(defaultSetting)
+    DefaultSettingViewModel ->> DatabaseUseCase: updateDefaultSetting(defaultSetting)
+    DatabaseUseCase ->> Repository: updateDefaultSetting(defaultSetting)
+    Repository ->> Room: updateDefaultSettingEntity(defaultSettingEntity)
+    Repository ->> Room: updateDefaultSurchargeEntity(defaultSurchargeEntity)
+    DefaultSettingScreen ->> FeedScreen: Chuyên màn hình
+```
+
+#### 8. Nhập điện nước qua hình ảnh
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant FeedScreen
+    participant CalScreen
+    participant BillScreen
+    participant CalViewModel
+    participant BillViewModel
+    participant DatabaseUseCase
+    participant Repository
+    participant Room
+    
+    User ->> FeedScreen: Chọn chức năng tính tiền điện
+    FeedScreen ->> CalScreen: Chuyển màn hình
+    User ->> CalScreen: Chọn Icon Chụp Hình khối điện
+    CalScreen ->> CalScreen: Sẽ làm gì nữa ? dicuss Tú
+    User ->> CalScreen: Chọn Icon Chụp Hình khối nước
+    CalScreen ->> CalScreen: Sẽ làm gì nữa ? dicuss Tú
+    User ->> CalScreen: Chọn Tính tiền
+    CalScreen ->> CalViewModel: getLastBillTemp(): Bill
+    CalViewModel ->> DatabaseUseCase: getLastBillTemp(kgElect,kgWater,Time) : Bill
+    
+    DatabaseUseCase ->> Repository: getDefaultSetting: DefaultSetting
+    Repository ->> Room: getAllDefaultSetting(): List<DefaultSettingEntity> 
+    Room -->> Repository: return List<DefaultSettingEntity> -> get first
+    Repository ->> Repository: convertEntityToObject(): DefaultSetting
+    Repository -->> DatabaseUseCase: return DefaultSetting
+
+    DatabaseUseCase ->> Repository: getBillLast: Bill
+    Repository ->> Room: getAllBill(): List<BillEntity>
+    Room -->> Repository: return List<BillEntity> -> get last BillEntity
+    Repository ->> Repository: convertEntityToObject(): Bill
+    Repository -->> DatabaseUseCase: return Bill
+    DatabaseUseCase ->> DatabaseUseCase: merge Bill and DefaultSetting
+    DatabaseUseCase -->> CalViewModel: return Bill
+    CalViewModel -->> CalScreen: return Bill
+    
+    
+    CalScreen ->> BillScreen: Chuyển màn hình kèm data Bill
+    
+    BillScreen ->> BillScreen: getTotalMoney()
+    
+    User ->> BillScreen: Chọn Hoàn tất
+    BillScreen ->> BillViewModel: insertBill(bill)
+    BillViewModel ->> DatabaseUseCase: insertBill(bill)
+    DatabaseUseCase ->> Repository: insertBill(bill)
+    Repository ->> Room: insertBill(billEntity)
+    Repository ->> Room: insertSurcharge(surchargeEntity)
+    
+    BillScreen ->> FeedScreen: Chuyển về
+```
+
+### Class Diagram
+
+```mermaid
+classDiagram
+    class Bill {
+        id: Long
+        moneyRent: Long
+        electricityBill: ElectricityBill
+        waterBill: WaterBill
+        timeFrom: Long
+        timeTo: Long
+        surcharges: ArrayList<Surcharge>
+        +getTotalMoney(): Long
+    }
+
+    class DefaultSetting {
+        id: Long
+        timeNotification: Long
+        rentHouse: Long
+        rentElect: Long
+        rentWater: Long
+        defaultSurcharges: ArrayList<DefaultSurcharge>
+        +toSurcharges(): ArrayList<Surcharge>
+    }
+
+    class DefaultSurcharge {
+        id: Long
+        name: String
+        price: Long
+        +toSurcharge(): Surcharge
+    }
+
+    class ElectricityBill {
+        preElectric: Int
+        newElectric: Int
+        price: Int
+        +getKgElectric(): Int
+        +getMoney(): Int
+    }
+
+    class Room {
+        bills: List<Bill>
+        +getBill(index: Int): Bill
+        +getFirstBill(): Bill
+    }
+
+    class Surcharge {
+        id: Long
+        name: String
+        price: Int
+    }
+
+    class WaterBill {
+        preWater: Int
+        newWater: Int
+        price: Int
+        +getKgWater(): Int
+        +getMoney(): Int
+    }
+
+    Bill <-- DefaultSetting
+    DefaultSetting --> DefaultSurcharge
+    DefaultSurcharge --> Surcharge
+    Bill --> ElectricityBill
+    Bill --> WaterBill
+    Room --> Bill
+
+```
