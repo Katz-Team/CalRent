@@ -519,58 +519,33 @@ sequenceDiagram
     DefaultSettingScreen ->> FeedScreen: Chuyên màn hình
 ```
 
-#### 8. Nhập điện nước qua hình ảnh
+#### 8. Nhập điện qua hình ảnh
 
 ```mermaid
 sequenceDiagram
     actor User
-    participant FeedScreen
-    participant CalScreen
-    participant BillScreen
-    participant CalViewModel
-    participant BillViewModel
-    participant DatabaseUseCase
-    participant Repository
-    participant Room
+    participant SomeThingScreen
+    participant SomeThingViewModel
+    participant CameraScreen
+    participant CameraViewModel
+    participant CameraUseCase
     
-    User ->> FeedScreen: Chọn chức năng tính tiền điện
-    FeedScreen ->> CalScreen: Chuyển màn hình
-    User ->> CalScreen: Chọn Icon Chụp Hình khối điện
-    CalScreen ->> CalScreen: Sẽ làm gì nữa ? dicuss Tú
-    User ->> CalScreen: Chọn Icon Chụp Hình khối nước
-    CalScreen ->> CalScreen: Sẽ làm gì nữa ? dicuss Tú
-    User ->> CalScreen: Chọn Tính tiền
-    CalScreen ->> CalViewModel: getLastBillTemp(): Bill
-    CalViewModel ->> DatabaseUseCase: getLastBillTemp(kgElect,kgWater,Time) : Bill
+    User ->> SomeThingScreen: Chọn chức năng camera
+    SomeThingScreen ->> SomeThingViewModel: Chuyển sang màn hình
+    SomeThingViewModel ->> CameraScreen: Navigator kèm theo mode Water hoặc Electric
+    User ->> CameraScreen: Di chuyển camera đến bức ảnh
+    CameraScreen ->> CameraViewModel: detectClock() : String
+    loop detect bức ảnh
+        CameraViewModel ->> CameraUseCase: detectClock() : String
+        CameraUseCase ->>  CameraUseCase: detectAllString() : String
+        CameraUseCase ->> CameraUseCase: filterResult(water/electric) : String
+        break filterResult != null
+            CameraUseCase -->> CameraViewModel: return result : String
+        end
+        
+    end
+    CameraViewModel -->> SomeThingScreen: Navigator kèm theo result: String
     
-    DatabaseUseCase ->> Repository: getDefaultSetting: DefaultSetting
-    Repository ->> Room: getAllDefaultSetting(): List<DefaultSettingEntity> 
-    Room -->> Repository: return List<DefaultSettingEntity> -> get first
-    Repository ->> Repository: convertEntityToObject(): DefaultSetting
-    Repository -->> DatabaseUseCase: return DefaultSetting
-
-    DatabaseUseCase ->> Repository: getBillLast: Bill
-    Repository ->> Room: getAllBill(): List<BillEntity>
-    Room -->> Repository: return List<BillEntity> -> get last BillEntity
-    Repository ->> Repository: convertEntityToObject(): Bill
-    Repository -->> DatabaseUseCase: return Bill
-    DatabaseUseCase ->> DatabaseUseCase: merge Bill and DefaultSetting
-    DatabaseUseCase -->> CalViewModel: return Bill
-    CalViewModel -->> CalScreen: return Bill
-    
-    
-    CalScreen ->> BillScreen: Chuyển màn hình kèm data Bill
-    
-    BillScreen ->> BillScreen: getTotalMoney()
-    
-    User ->> BillScreen: Chọn Hoàn tất
-    BillScreen ->> BillViewModel: insertBill(bill)
-    BillViewModel ->> DatabaseUseCase: insertBill(bill)
-    DatabaseUseCase ->> Repository: insertBill(bill)
-    Repository ->> Room: insertBill(billEntity)
-    Repository ->> Room: insertSurcharge(surchargeEntity)
-    
-    BillScreen ->> FeedScreen: Chuyển về
 ```
 
 ### Class Diagram
