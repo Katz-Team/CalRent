@@ -8,29 +8,29 @@ Welcome to the CalRent wiki!
 
 ```mermaid
 graph LR
-A((Bắt đầu)) --> B{Tới hạng tiền nhà chưa}
-B --> |Chưa| C(Không làm gì cả)
-B --> |Có| D(Bắt đầu tính tiền nhà)
-D --> E(Chụp công tơ điện)
-D --> F(Chụp đồng hồ nước)
-E --> G(Tính tiền điện nước -> tiền nhà)
-F --> G
-G --> H(Gửi hình ảnh tính toán, công tơ điện nước cho chủ trọ)
-H --> I((Gửi tiền))
+    A((Bắt đầu)) --> B{Tới hạng tiền nhà chưa}
+    B --> |Chưa| C(Không làm gì cả)
+    B --> |Có| D(Bắt đầu tính tiền nhà)
+    D --> E(Chụp công tơ điện)
+    D --> F(Chụp đồng hồ nước)
+    E --> G(Tính tiền điện nước -> tiền nhà)
+    F --> G
+    G --> H(Gửi hình ảnh tính toán, công tơ điện nước cho chủ trọ)
+    H --> I((Gửi tiền))
 ```
 
 - Tính tiền nhà dùng app.
 
 ```mermaid
 graph LR
-A((Bắt đầu)) --> B("Ứng dụng gửi thông báo (Tự động)")
-B --> |Tới ngày| C("Chụp công tơ điện")
-B --> |Tới ngày| D("Chụp đồng hồ nước")
-D --> E("Tính tiền điện nước (Tự động) -> tiền nhà (Tự động)")
-C --> E
-E --> F("Hiện bill chi tiết các thông tin (Tự động)")
-F --> G(Chụp hình gửi chủ trọ)
-G --> H((Gửi tiền))
+    A((Bắt đầu)) --> B("Ứng dụng gửi thông báo (Tự động)")
+    B --> |Tới ngày| C("Chụp công tơ điện")
+    B --> |Tới ngày| D("Chụp đồng hồ nước")
+    D --> E("Tính tiền điện nước (Tự động) -> tiền nhà (Tự động)")
+    C --> E
+    E --> F("Hiện bill chi tiết các thông tin (Tự động)")
+    F --> G(Chụp hình gửi chủ trọ)
+    G --> H((Gửi tiền))
 ```
 
 ## User Requests
@@ -202,28 +202,28 @@ Lưu ý:
 
 ```mermaid
 graph TD
-  subgraph Android_Application[Android Application]
-    subgraph User_Interface[User Interface]
-      View(View)
-      Component(Component)
+    subgraph Android_Application[Android Application]
+        subgraph User_Interface[User Interface]
+            View(View)
+            Component(Component)
+        end
+
+        subgraph ViewModel[ViewModel]
+            flow(Flow / MutableStateFlow)
+        end
+
+        subgraph UseCase["Domain (UseCase)"]
+            Logic(Logic)
+        end
+
+        subgraph Data_Repository[Data Repository]
+            RoomData(Room Database)
+        end
     end
 
-    subgraph ViewModel[ViewModel]
-      flow(Flow / MutableStateFlow)
-    end
-
-    subgraph UseCase["Domain (UseCase)"]
-      Logic(Logic)    
-    end
-
-    subgraph Data_Repository[Data Repository]
-      RoomData(Room Database)
-    end
-  end
-
-  User_Interface <--> ViewModel
-  ViewModel <--> UseCase
-  UseCase <--> Data_Repository
+    User_Interface <--> ViewModel
+    ViewModel <--> UseCase
+    UseCase <--> Data_Repository
 
 ```
 
@@ -232,39 +232,39 @@ graph TD
 ```mermaid
 erDiagram
     BillEntity {
-    id Long
-    moneyRent Long
-    preElectric Int
-    newElectric Int
-    priceElectric Int
-    preWater Int
-    newWater Int
-    priceWater Int
-    timeFrom Long
-    timeTo Long
-}
+        id Long
+        moneyRent Long
+        preElectric Int
+        newElectric Int
+        priceElectric Int
+        preWater Int
+        newWater Int
+        priceWater Int
+        timeFrom Long
+        timeTo Long
+    }
     DefaultSettingEntity {
-    id Long
-    timeNotification Long
-    rentHouse Long
-    rentElect Long
-    rentWater Long
-}
+        id Long
+        timeNotification Long
+        rentHouse Long
+        rentElect Long
+        rentWater Long
+    }
     DefaultSurchargeEntity {
-    id Long
-    idSetting Long
-    name String
-    price Long
-}
+        id Long
+        idSetting Long
+        name String
+        price Long
+    }
     SurchargeEntity {
-    id Long
-    idBill Long
-    name String
-    price Int
-}
+        id Long
+        idBill Long
+        name String
+        price Int
+    }
 
-BillEntity ||--|{ SurchargeEntity: idBill
-DefaultSettingEntity ||--|{ DefaultSurchargeEntity: idSetting
+    BillEntity ||--|{ SurchargeEntity: idBill
+    DefaultSettingEntity ||--|{ DefaultSurchargeEntity: idSetting
 
 ```
 
@@ -283,18 +283,18 @@ sequenceDiagram
     participant UseCaseInnit
     participant Repository
     participant Room
-    
+
     User ->> ScreenInnit: Open App
     ScreenInnit ->> ViewModelInnit: haveDefaultSetting(): Boolean
     ViewModelInnit ->> UseCaseInnit: haveDefaultSetting() : Boolean
     UseCaseInnit ->> Repository: getDefaultSetting(): DefaultSetting
     Repository ->> Room: getDefaultSettingEntity(): DefaultSettingEntity
-    
+
     Room -->> Repository: DefaultSettingEntity?
     Repository ->> Repository: convertEntityToObject(): DefaultSetting?
     Repository -->> UseCaseInnit: DefaultSetting?
-    
-    alt DefaultSetting không null 
+
+    alt DefaultSetting không null
         UseCaseInnit -->> ViewModelInnit: True
         ViewModelInnit -->> ScreenInnit: True
         ScreenInnit ->> ViewModelInnit: Chuyển sang Quản lý tiền trọ UC-002
@@ -302,7 +302,7 @@ sequenceDiagram
         UseCaseInnit -->> ViewModelInnit: False
         ViewModelInnit -->> ScreenInnit: False
         ScreenInnit ->> ScreenStep1: Hiện Step1
-        loop 
+        loop
             User ->> ScreenStep1: Nhập tiền nhà, ngày đóng trọ
             User ->> ScreenStep1: Chọn tiếp tục
             ScreenStep1 ->> ViewModelInnit: checkValueInvalid: Boolean()
@@ -359,16 +359,16 @@ sequenceDiagram
     participant DatabaseUseCase
     participant Repository
     participant Room
-    
+
     User ->> FeedScreen: Chọn chức năng tính tiền điện
     FeedScreen ->> CalScreen: Chuyển màn hình
     User ->> CalScreen: Nhập khối điện, khối nước
     User ->> CalScreen: Chọn Tính tiền
     CalScreen ->> CalViewModel: getLastBillTemp(): Bill
     CalViewModel ->> DatabaseUseCase: getLastBillTemp(kgElect,kgWater,Time) : Bill
-    
+
     DatabaseUseCase ->> Repository: getDefaultSetting: DefaultSetting
-    Repository ->> Room: getAllDefaultSetting(): List<DefaultSettingEntity> 
+    Repository ->> Room: getAllDefaultSetting(): List<DefaultSettingEntity>
     Room -->> Repository: return List<DefaultSettingEntity> -> get first
     Repository ->> Repository: convertEntityToObject(): DefaultSetting
     Repository -->> DatabaseUseCase: return DefaultSetting
@@ -381,19 +381,19 @@ sequenceDiagram
     DatabaseUseCase ->> DatabaseUseCase: merge Bill and DefaultSetting
     DatabaseUseCase -->> CalViewModel: return Bill
     CalViewModel -->> CalScreen: return Bill
-    
-    
+
+
     CalScreen ->> BillScreen: Chuyển màn hình kèm data Bill
-    
+
     BillScreen ->> BillScreen: getTotalMoney()
-    
+
     User ->> BillScreen: Chọn Hoàn tất
     BillScreen ->> BillViewModel: insertBill(bill)
     BillViewModel ->> DatabaseUseCase: insertBill(bill)
     DatabaseUseCase ->> Repository: insertBill(bill)
     Repository ->> Room: insertBill(billEntity)
     Repository ->> Room: insertSurcharge(surchargeEntity)
-    
+
     BillScreen ->> FeedScreen: Chuyển về
 ```
 
@@ -407,13 +407,13 @@ sequenceDiagram
     participant DatabaseUseCase
     participant Repository
     participant Room
-    
+
     User ->> FeedScreen: Chọn Edit Model
     FeedScreen ->> FeedScreen: Chuyển sang Edit Model
     User ->> FeedScreen: Chọn Item muốn xóa
     User ->> FeedScreen: Chọn xóa
     FeedScreen -->> User: Xác thực muốn xóa
-    
+
     alt name
         User ->> FeedScreen: Xác Nhận
         FeedScreen ->> FeedViewModel: deleteBill(bill)
@@ -435,14 +435,14 @@ sequenceDiagram
     participant DatabaseUseCase
     participant Repository
     participant Room
-    
+
     FeedViewModel ->> DatabaseUseCase: getFlowBills: Flow<List<Bill>>
     DatabaseUseCase ->> Repository: getFlowBills: Flow<List<Bill>>
     Repository ->> Room: loadBillAndSurcharge: Flow<Map<BillEntity, List<SurchargeEntity>>>
     Room -->> Repository: return Flow<Map<BillEntity, List<SurchargeEntity>>>
     Repository -->> DatabaseUseCase: return Flow<List<Bill>>
     DatabaseUseCase -->> FeedViewModel: Flow<List<Bill>>
-    
+
     FeedScreen ->> FeedViewModel: getRoom() : StateFlow<List<Bill>>
     FeedViewModel -->> FeedScreen: StateFlow<List<Bill>>
 ```
@@ -454,8 +454,8 @@ sequenceDiagram
     participant DatabaseUseCase
     participant Repository
     participant Room
-    
-    
+
+
     DatabaseUseCase ->> Repository: insertBill(bill)
     Repository ->> Room: insertBill(BillEntity)
     Repository ->> Room: insertSurcharge(SurchargeEntity)
@@ -471,7 +471,7 @@ sequenceDiagram
     participant DatabaseUseCase
     participant Repository
     participant Room
-    
+
     User ->> FeedScreen: Chọn tiền trọ muốn chỉnh sửa
     FeedScreen ->> BillScreen: Chuyển màn hình kèm data Bill
     User ->> BillScreen: Chọn Edit Mode
@@ -496,7 +496,7 @@ sequenceDiagram
     participant DatabaseUseCase
     participant Repository
     participant Room
-    
+
     User ->> FeedScreen: Chọn Chỉnh Sửa Default
     FeedScreen ->> DefaultSettingScreen: Chuyển màn hình
     DefaultSettingScreen ->> DefaultSettingViewModel: getDefaultSetting(): DefaultSetting
@@ -504,12 +504,12 @@ sequenceDiagram
     DatabaseUseCase ->> Repository: getDefaultSetting(): DefaultSetting
     Repository ->> Room: getDefaultSettingEntity(): DefaultSettingEntity
     Repository ->> Room: getDefaultSettingEntity(): DefaultSurchargeEntity
-    
+
     Room -->> Repository: return DefaultSettingEntity
     Repository -->> DatabaseUseCase: return DefaultSetting
     DatabaseUseCase -->> DefaultSettingViewModel: return DefaultSetting
     DefaultSettingViewModel -->> DefaultSettingScreen: return DefaultSetting
-    
+
     User ->> DefaultSettingScreen: Thay đổi thông tin
     DefaultSettingScreen ->> DefaultSettingViewModel: updateDefaultSetting(defaultSetting)
     DefaultSettingViewModel ->> DatabaseUseCase: updateDefaultSetting(defaultSetting)
@@ -529,7 +529,7 @@ sequenceDiagram
     participant CameraScreen
     participant CameraViewModel
     participant CameraUseCase
-    
+
     User ->> SomeThingScreen: Chọn chức năng camera
     SomeThingScreen ->> SomeThingViewModel: Chuyển sang màn hình
     SomeThingViewModel ->> CameraScreen: Navigator kèm theo mode Water hoặc Electric
@@ -542,10 +542,10 @@ sequenceDiagram
         break filterResult != null
             CameraUseCase -->> CameraViewModel: return result : String
         end
-        
+
     end
     CameraViewModel -->> SomeThingScreen: Navigator kèm theo result: String
-    
+
 ```
 
 ### Class Diagram
