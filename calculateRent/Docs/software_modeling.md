@@ -275,74 +275,63 @@ erDiagram
 ```mermaid
 sequenceDiagram
     actor User
-    participant ScreenInnit
-    participant ScreenStep1
-    participant ScreenStep2
-    participant ScreenStep3
-    participant ViewModelInnit
-    participant UseCaseInnit
+    participant FeedScreen
+    participant CalScreen
+    participant BillScreen
+    participant CalViewModel
+    participant BillViewModel
+    participant DatabaseUseCase
     participant Repository
     participant Room
 
-    User ->> ScreenInnit: Open App
-    ScreenInnit ->> ViewModelInnit: haveDefaultSetting(): Boolean
-    ViewModelInnit ->> UseCaseInnit: haveDefaultSetting() : Boolean
-    UseCaseInnit ->> Repository: getDefaultSetting(): DefaultSetting
-    Repository ->> Room: getDefaultSettingEntity(): DefaultSettingEntity
+    User ->> FeedScreen: Chọn chức năng tính tiền điện
+    FeedScreen ->> CalScreen: Chuyển màn hình
+    User ->> CalScreen: Nhập khối điện, khối nước
+    User ->> CalScreen: Chọn Tính tiền
+    CalScreen ->> CalViewModel: getLastBillTemp(): Bill
+    CalViewModel ->> DatabaseUseCase: getLastBillTemp(): Bill
+    
+    par Retrieve DefaultSetting and Last Bill
+        DatabaseUseCase ->> Repository: getDefaultSetting: DefaultSetting
+        DatabaseUseCase ->> Repository: getBillLast: Bill
+    end
 
-    Room -->> Repository: DefaultSettingEntity?
-    Repository ->> Repository: convertEntityToObject(): DefaultSetting?
-    Repository -->> UseCaseInnit: DefaultSetting?
+    Repository ->> Room: getAllDefaultSetting(): List<DefaultSettingEntity>
+    Room -->> Repository: return List<DefaultSettingEntity> -> get first
+    Repository ->> Room: getAllBill(): List<BillEntity>
+    Room -->> Repository: return List<BillEntity> -> get last BillEntity
+    Repository ->> Repository: convertEntityToObject(): DefaultSetting
+    Repository ->> Repository: convertEntityToObject(): Bill
+    Repository -->> DatabaseUseCase: return DefaultSetting
+    Repository -->> DatabaseUseCase: return Bill
+    DatabaseUseCase ->> DatabaseUseCase: merge Bill and DefaultSetting
+    DatabaseUseCase -->> CalViewModel: return Bill
+    CalViewModel -->> CalScreen: return Bill
 
-    alt DefaultSetting không null
-        UseCaseInnit -->> ViewModelInnit: True
-        ViewModelInnit -->> ScreenInnit: True
-        ScreenInnit ->> ViewModelInnit: Chuyển sang Quản lý tiền trọ UC-002
-    else DefaultSetting thì null
-        UseCaseInnit -->> ViewModelInnit: False
-        ViewModelInnit -->> ScreenInnit: False
-        ScreenInnit ->> ScreenStep1: Hiện Step1
-        loop
-            User ->> ScreenStep1: Nhập tiền nhà, ngày đóng trọ
-            User ->> ScreenStep1: Chọn tiếp tục
-            ScreenStep1 ->> ViewModelInnit: checkValueInvalid: Boolean()
-            alt valid
-                ViewModelInnit -->> ScreenStep1: True
-                ScreenStep1 -->> ScreenInnit: Hiện Step 2
-                ScreenInnit ->> ScreenStep2: Hiện Step 2
-                User ->> ScreenStep2: Nhập tiền điện nước, mốc khởi điểm điện nước
-                User ->> ScreenStep2: Chọn tiếp tục
-                ScreenStep2 ->> ViewModelInnit: checkValueInvalid: Boolean()
-                alt valid
-                    ViewModelInnit -->> ScreenStep2: True
-                    ScreenStep2 -->> ScreenInnit: Hiện Step 3
-                    ScreenInnit ->> ScreenStep3: Hiện Step 3
-                    User ->> ScreenStep3: Nhập phụ phí
-                    User ->> ScreenStep3: Chọn tiếp tục
-                    ScreenStep3 ->> ViewModelInnit: checkValueInvalid: Boolean()
-                    alt valid
-                        ViewModelInnit -->> ScreenStep3: True
-                        ScreenStep3 ->> ScreenInnit: Chuyển sang step mới
-                        ScreenInnit ->> ViewModelInnit: insertDefaultSetting(default)
-                        ViewModelInnit ->> UseCaseInnit: insertDefaultSetting(default)
-                        UseCaseInnit ->> Repository: insertDefaultSetting(default)
-                        Repository ->> Repository: convertObjectToEntity(): DefaultSettingEntity?
-                        Repository ->> Room: insertDefaultSettingEntity(defaultEntity)
-                        Repository ->> Room: insertDefaultSurchargeEntity(defaultSubEntity)
-                        ScreenInnit ->> ViewModelInnit: Chuyển sang Quản lý tiền trọ UC-002
-                    else invalid
-                        ViewModelInnit -->> ScreenStep3: False
-                        ScreenStep3 ->> ScreenStep3: Thông báo lỗi, nhập lại
-                    end
-                else invalid
-                    ViewModelInnit -->> ScreenStep2: False
-                    ScreenStep2 ->> ScreenStep2: Thông báo lỗi, nhập lại
-                end
-            else invalid
-                ViewModelInnit -->> ScreenStep1: False
-                ScreenStep1 ->> ScreenStep1: Thông báo lỗi, nhập lại
-            end
-        end
+    CalScreen ->> BillScreen: Chuyển màn hình kèm data Bill
+    BillScreen ->> BillScreen: getTotalMoney()
+
+    User ->> BillScreen: Chọn Hoàn tất
+    BillScreen ->> BillViewModel: insertBill(bill)
+    BillViewModel ->> DatabaseUseCase: insertBill(bill)
+
+    par Insert Bill and Surcharge
+        DatabaseUseCase ->> Repository: insertBill(bill)
+        DatabaseUseCase ->> Repository: insertSurcharge(surchargeEntity)
+    end
+
+    Repository ->> Room: insertBill(billEntity)
+    Room -->> Repository: Confirmation
+    Repository ->> Room: insertSurcharge(surchargeEntity)
+    Room -->> Repository: Confirmation
+    Repository -->> DatabaseUseCase: Confirm Insertions
+    DatabaseUseCase -->> BillViewModel: Confirm
+    BillViewModel -->> BillScreen: Display Confirmation
+
+    BillScreen ->> FeedScreen: Chuyển về và hiển thị thông báo thành công
+
+    alt Error occurs
+        BillScreen ->> User: Hiển thị thông báo lỗi
     end
 ```
 
