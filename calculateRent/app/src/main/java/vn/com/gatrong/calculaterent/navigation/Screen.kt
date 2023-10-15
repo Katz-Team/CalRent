@@ -8,6 +8,7 @@ sealed class Screen(val route : String) {
         FEED_SCREEN,
         CAL_SCREEN,
         BILL_SCREEN,
+        CAMERA_SCREEN,
         BACK
     }
 
@@ -15,5 +16,6 @@ sealed class Screen(val route : String) {
     class FeedScreen : Screen(NavigateState.FEED_SCREEN.toString())
     class CalScreen : Screen(NavigateState.CAL_SCREEN.toString())
     class BillScreen(val bill: Bill, val modeView : Boolean = true) : Screen(NavigateState.BILL_SCREEN.toString())
+    class CameraScreen : Screen(NavigateState.CAMERA_SCREEN.toString())
     class Back : Screen(NavigateState.BACK.toString())
 }

@@ -1,9 +1,10 @@
 package vn.com.gatrong.calculaterent.view.innitRoomScreen
 
+import android.Manifest
 import android.annotation.SuppressLint
-import android.util.Log
-import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -44,14 +45,22 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import vn.com.gatrong.calculaterent.R
 import vn.com.gatrong.calculaterent.extensions.formatToMoney
+import vn.com.gatrong.calculaterent.extensions.getActivity
 import vn.com.gatrong.calculaterent.extensions.isDigitsOrDot
+import vn.com.gatrong.calculaterent.extensions.openAppSettings
 import vn.com.gatrong.calculaterent.model.DefaultSurcharge
+import vn.com.gatrong.calculaterent.navigation.Navigator
+import vn.com.gatrong.calculaterent.navigation.Screen
+import vn.com.gatrong.calculaterent.view.permissionDialog.CameraPermissionTextProvider
+import vn.com.gatrong.calculaterent.view.permissionDialog.PermissionDialog
+import vn.com.gatrong.calculaterent.view.permissionDialog.PermissionDialogViewModel
 
 @Composable
 fun InnitScreen() {
@@ -153,9 +162,20 @@ fun Step1() {
 @Composable
 fun Step2() {
     val viewModel = viewModel<InnitRoomViewModel>()
+    val permissionDialogViewModel = viewModel<PermissionDialogViewModel>()
     val rentElect = viewModel.rentElect.collectAsStateWithLifecycle().value
     val rentWater = viewModel.rentWater.collectAsStateWithLifecycle().value
     val context = LocalContext.current
+    val cameraPermission = Manifest.permission.CAMERA
+    val cameraPermissionResultLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted ->
+            permissionDialogViewModel.onPermissionResult(
+                permission = cameraPermission,
+                isGranted = isGranted
+            )
+        }
+    )
     OutlinedTextField(label = { Text("Giá điện") },
         value = TextFieldValue(text = rentElect.formatToMoney(),selection = TextRange(rentElect.formatToMoney().length)),
         onValueChange = {
@@ -180,7 +200,10 @@ fun Step2() {
         trailingIcon = {
             IconButton(
                 onClick = {
-                Toast.makeText(context, "Bắt camera ở đây", Toast.LENGTH_LONG).show()
+                    cameraPermissionResultLauncher.launch(cameraPermission)
+                    // TODO: Add Dialog to confirm access camera.
+                    Navigator.navigateTo(Screen.CameraScreen())
+                //Toast.makeText(context, "Bắt camera ở đây", Toast.LENGTH_LONG).show()
                 }
             ) {
                 Icon(

@@ -18,6 +18,7 @@ import vn.com.gatrong.calculaterent.ui.theme.CalculateRentTheme
 import vn.com.gatrong.calculaterent.view.FeedScreen
 import vn.com.gatrong.calculaterent.view.billScreen.BillScreen
 import vn.com.gatrong.calculaterent.view.calScreen.CalScreen
+import vn.com.gatrong.calculaterent.view.cameraScreen.CameraScreen
 import vn.com.gatrong.calculaterent.view.innitRoomScreen.InnitScreen
 
 class MainActivity : ComponentActivity() {
@@ -64,5 +65,6 @@ fun NavigationView() {
         composable(Screen.NavigateState.FEED_SCREEN.toString()) { FeedScreen() }
         composable(Screen.NavigateState.CAL_SCREEN.toString()) { CalScreen() }
         composable(Screen.NavigateState.BILL_SCREEN.toString()) { BillScreen() }
+        composable(Screen.NavigateState.CAMERA_SCREEN.toString()) { CameraScreen()}
     }
 }
