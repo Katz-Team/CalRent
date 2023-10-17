@@ -605,3 +605,84 @@ classDiagram
     Room --> Bill
 
 ```
+
+
+### UI Flow
+
+#### 1. Yêu cầu thiết kế:
+- **Phong cách thiết kế**: [Material Design 3 Kit](https://www.figma.com/community/file/1035203688168086460)
+- **Màu sắc**: Chưa biết.
+- **Logo & hình ảnh**: Chưa biết.
+
+#### 2. Mô tả chức năng:
+
+- **Ghi Nhận Chỉ Số Điện và Nước**: Người dùng nhập các chỉ số điện và nước. Hệ thống tính toán tổng số tiền dựa trên giá cả đã cài đặt và hiển thị số tiền cho người dùng trước khi lưu.
+
+#### 3. Luồng công việc (User Flow):
+
+##### 3.1 Ghi nhận điện nước tiêu thụ thủ công
+
+###### Flow
+
+###### Process
+- **Bắt đầu**: Màn hình Home.
+- **Quy trình cơ bản**: 
+  - 1 Người dùng: Chọn FAB
+  - 2 Hệ thống: Chuyển màn hình Calculate
+  - 3 Hệ thống: màn hình Calculate gồm
+    - 3.1 TextField: 
+      - Nội dung: Khối điện tháng này
+      - Đơn vị: Kwh
+    - 3.2 TextField: 
+      - Nội dung: Khối nước tháng này
+      - Đơn vị: Dm3
+    - 3.3 TextField: Hệ thống tự điền
+        - Nội dung: Khối điện tháng trước
+        - Đơn vị: Kwh
+    - 3.4 TextField: Hệ thống tự điền
+        - Nội dung: Khối nước tháng trước
+        - Đơn vị: Dm3
+    - 3.5 Danh sách các TextField phụ phí. (Hệ thống điền sẵn)
+    - 3.6 Button tính tiền
+  - 4 Người dùng: 
+    - 4.1 Nhập chỉ số khối điện tháng này
+    - 4.2 Nhập chỉ số khối nước tháng này
+    - 4.3 Chọn tính tiền
+  - 5 Hệ thống: Chuyển sang màn hình Bill
+  - 6 Hệ thống: màn hình Bill gồm
+    - 6.1 Text
+      - Nội dung: Thời gian tính tiền từ DD/MM/YYYY đến DD/MM/YYYY
+    - 6.2 Text
+      - Nội dung: Điện - Cách tính - Kết quả
+    - 6.3 Text
+      - Nội dung: Nước - Cách tính - Kết quả
+    - 6.4 Danh sách Text các phụ phí
+      - Nội dung: Tên - Giá tiền
+    - 6.5 Text
+      - Nội dung: Tiền nhà - Giá Tiền
+    - 6.6 Text
+      - Nội dung: Tổng giá tiền
+    - 6.7 Button
+      - Nội dung: Hoàn Tất
+  - 7 Người dùng: Chọn Hoàn Tất
+  - 8 Hệ Thống: Chuyển sang màn hình Home.
+
+- **Các trường hợp ngoại lệ**: 
+  - 4.1.a Người dùng: Nhập chỉ số điện tháng này thấp hơn tháng trước
+    - Hệ thống: Chuyển textField điện tháng này sang error với thông báo "Không được nhập tháng sau thấp hơn tháng trước"
+  - 4.2.a Người dùng: Nhập chỉ số nước tháng này thấp hơn tháng trước
+    - Hệ thống: Chuyển textField nước tháng này sang error với thông báo "Không được nhập tháng sau thấp hơn tháng trước"
+  - 4.a Người dùng: 
+    - 4.1 Để trống
+    - 4.2 Để trống
+    - Hệ thống: Chuyển textField nước và điện sang error với thông báo "Không được để trống"
+  - 4.a Người dùng: Nhập chỉ số điện tháng trước cao hơn tháng này
+    - Hệ thống: Chuyển textField điện tháng trước sang error với thông báo "Không được nhập tháng trước cao hơn tháng sau"
+  - 4.b Người dùng: Nhập chỉ số nước tháng trước cao hơn tháng này
+    - Hệ thống: Chuyển textField nước tháng trước sang error với thông báo "Không được nhập tháng trước cao hơn tháng sau"
+
+#### 4. Wireframes (nếu có):
+
+
+#### 5. Tham khảo:
+
