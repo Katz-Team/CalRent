@@ -275,74 +275,63 @@ erDiagram
 ```mermaid
 sequenceDiagram
     actor User
-    participant ScreenInnit
-    participant ScreenStep1
-    participant ScreenStep2
-    participant ScreenStep3
-    participant ViewModelInnit
-    participant UseCaseInnit
+    participant FeedScreen
+    participant CalScreen
+    participant BillScreen
+    participant CalViewModel
+    participant BillViewModel
+    participant DatabaseUseCase
     participant Repository
     participant Room
 
-    User ->> ScreenInnit: Open App
-    ScreenInnit ->> ViewModelInnit: haveDefaultSetting(): Boolean
-    ViewModelInnit ->> UseCaseInnit: haveDefaultSetting() : Boolean
-    UseCaseInnit ->> Repository: getDefaultSetting(): DefaultSetting
-    Repository ->> Room: getDefaultSettingEntity(): DefaultSettingEntity
+    User ->> FeedScreen: Chọn chức năng tính tiền điện
+    FeedScreen ->> CalScreen: Chuyển màn hình
+    User ->> CalScreen: Nhập khối điện, khối nước
+    User ->> CalScreen: Chọn Tính tiền
+    CalScreen ->> CalViewModel: getLastBillTemp(): Bill
+    CalViewModel ->> DatabaseUseCase: getLastBillTemp(): Bill
+    
+    par Retrieve DefaultSetting and Last Bill
+        DatabaseUseCase ->> Repository: getDefaultSetting: DefaultSetting
+        DatabaseUseCase ->> Repository: getBillLast: Bill
+    end
 
-    Room -->> Repository: DefaultSettingEntity?
-    Repository ->> Repository: convertEntityToObject(): DefaultSetting?
-    Repository -->> UseCaseInnit: DefaultSetting?
+    Repository ->> Room: getAllDefaultSetting(): List<DefaultSettingEntity>
+    Room -->> Repository: return List<DefaultSettingEntity> -> get first
+    Repository ->> Room: getAllBill(): List<BillEntity>
+    Room -->> Repository: return List<BillEntity> -> get last BillEntity
+    Repository ->> Repository: convertEntityToObject(): DefaultSetting
+    Repository ->> Repository: convertEntityToObject(): Bill
+    Repository -->> DatabaseUseCase: return DefaultSetting
+    Repository -->> DatabaseUseCase: return Bill
+    DatabaseUseCase ->> DatabaseUseCase: merge Bill and DefaultSetting
+    DatabaseUseCase -->> CalViewModel: return Bill
+    CalViewModel -->> CalScreen: return Bill
 
-    alt DefaultSetting không null
-        UseCaseInnit -->> ViewModelInnit: True
-        ViewModelInnit -->> ScreenInnit: True
-        ScreenInnit ->> ViewModelInnit: Chuyển sang Quản lý tiền trọ UC-002
-    else DefaultSetting thì null
-        UseCaseInnit -->> ViewModelInnit: False
-        ViewModelInnit -->> ScreenInnit: False
-        ScreenInnit ->> ScreenStep1: Hiện Step1
-        loop
-            User ->> ScreenStep1: Nhập tiền nhà, ngày đóng trọ
-            User ->> ScreenStep1: Chọn tiếp tục
-            ScreenStep1 ->> ViewModelInnit: checkValueInvalid: Boolean()
-            alt valid
-                ViewModelInnit -->> ScreenStep1: True
-                ScreenStep1 -->> ScreenInnit: Hiện Step 2
-                ScreenInnit ->> ScreenStep2: Hiện Step 2
-                User ->> ScreenStep2: Nhập tiền điện nước, mốc khởi điểm điện nước
-                User ->> ScreenStep2: Chọn tiếp tục
-                ScreenStep2 ->> ViewModelInnit: checkValueInvalid: Boolean()
-                alt valid
-                    ViewModelInnit -->> ScreenStep2: True
-                    ScreenStep2 -->> ScreenInnit: Hiện Step 3
-                    ScreenInnit ->> ScreenStep3: Hiện Step 3
-                    User ->> ScreenStep3: Nhập phụ phí
-                    User ->> ScreenStep3: Chọn tiếp tục
-                    ScreenStep3 ->> ViewModelInnit: checkValueInvalid: Boolean()
-                    alt valid
-                        ViewModelInnit -->> ScreenStep3: True
-                        ScreenStep3 ->> ScreenInnit: Chuyển sang step mới
-                        ScreenInnit ->> ViewModelInnit: insertDefaultSetting(default)
-                        ViewModelInnit ->> UseCaseInnit: insertDefaultSetting(default)
-                        UseCaseInnit ->> Repository: insertDefaultSetting(default)
-                        Repository ->> Repository: convertObjectToEntity(): DefaultSettingEntity?
-                        Repository ->> Room: insertDefaultSettingEntity(defaultEntity)
-                        Repository ->> Room: insertDefaultSurchargeEntity(defaultSubEntity)
-                        ScreenInnit ->> ViewModelInnit: Chuyển sang Quản lý tiền trọ UC-002
-                    else invalid
-                        ViewModelInnit -->> ScreenStep3: False
-                        ScreenStep3 ->> ScreenStep3: Thông báo lỗi, nhập lại
-                    end
-                else invalid
-                    ViewModelInnit -->> ScreenStep2: False
-                    ScreenStep2 ->> ScreenStep2: Thông báo lỗi, nhập lại
-                end
-            else invalid
-                ViewModelInnit -->> ScreenStep1: False
-                ScreenStep1 ->> ScreenStep1: Thông báo lỗi, nhập lại
-            end
-        end
+    CalScreen ->> BillScreen: Chuyển màn hình kèm data Bill
+    BillScreen ->> BillScreen: getTotalMoney()
+
+    User ->> BillScreen: Chọn Hoàn tất
+    BillScreen ->> BillViewModel: insertBill(bill)
+    BillViewModel ->> DatabaseUseCase: insertBill(bill)
+
+    par Insert Bill and Surcharge
+        DatabaseUseCase ->> Repository: insertBill(bill)
+        DatabaseUseCase ->> Repository: insertSurcharge(surchargeEntity)
+    end
+
+    Repository ->> Room: insertBill(billEntity)
+    Room -->> Repository: Confirmation
+    Repository ->> Room: insertSurcharge(surchargeEntity)
+    Room -->> Repository: Confirmation
+    Repository -->> DatabaseUseCase: Confirm Insertions
+    DatabaseUseCase -->> BillViewModel: Confirm
+    BillViewModel -->> BillScreen: Display Confirmation
+
+    BillScreen ->> FeedScreen: Chuyển về và hiển thị thông báo thành công
+
+    alt Error occurs
+        BillScreen ->> User: Hiển thị thông báo lỗi
     end
 ```
 
@@ -616,3 +605,97 @@ classDiagram
     Room --> Bill
 
 ```
+
+
+### UI Flow
+
+#### 1. Yêu cầu thiết kế:
+- **Phong cách thiết kế**: [Material Design 3 Kit](https://www.figma.com/community/file/1035203688168086460)
+- **Màu sắc**: Chưa biết.
+- **Logo & hình ảnh**: Chưa biết.
+
+#### 2. Mô tả chức năng:
+
+- **Ghi Nhận Chỉ Số Điện và Nước**: Người dùng nhập các chỉ số điện và nước. Hệ thống tính toán tổng số tiền dựa trên giá cả đã cài đặt và hiển thị số tiền cho người dùng trước khi lưu.
+
+#### 3. Luồng công việc (User Flow):
+
+##### 3.1 Ghi nhận điện nước tiêu thụ thủ công
+
+###### Flow
+
+```mermaid
+graph TB
+  A((Bắt đầu: Màn hình Home)) -->|Chọn FAB| B((Màn hình Calculate))
+  B -->|Người dùng nhập thông tin| B1{Kiểm tra dữ liệu}
+  B1 -->|Dữ liệu hợp lệ| C((Màn hình Bill))
+  B1 -->|Điện tháng này > tháng trước| B1a[Hiển thị lỗi: 'Không được nhập tháng sau cao hơn tháng trước']
+B1 -->|Nước tháng này > tháng trước| B1b[Hiển thị lỗi: 'Không được nhập tháng sau cao hơn tháng trước']
+B1 -->|Để trống điện/nước| B1c[Hiển thị lỗi: 'Không được để trống']
+B1 -->|Điện tháng trước < tháng này| B1d[Hiển thị lỗi: 'Không được nhập tháng trước thấp hơn tháng sau']
+B1 -->|Nước tháng trước < tháng này| B1e[Hiển thị lỗi: 'Không được nhập tháng trước thấp hơn tháng sau']
+C -->|Chọn Hoàn Tất| D((Màn hình Home))
+```
+
+###### Process
+- **Bắt đầu**: Màn hình Home.
+- **Quy trình cơ bản**: 
+  - 1 Người dùng: Chọn FAB
+  - 2 Hệ thống: Chuyển màn hình Calculate
+  - 3 Hệ thống: màn hình Calculate gồm
+    - 3.1 TextField: 
+      - Nội dung: Khối điện tháng này
+      - Đơn vị: Kwh
+    - 3.2 TextField: 
+      - Nội dung: Khối nước tháng này
+      - Đơn vị: Dm3
+    - 3.3 TextField: Hệ thống tự điền
+        - Nội dung: Khối điện tháng trước
+        - Đơn vị: Kwh
+    - 3.4 TextField: Hệ thống tự điền
+        - Nội dung: Khối nước tháng trước
+        - Đơn vị: Dm3
+    - 3.5 Danh sách các TextField phụ phí. (Hệ thống điền sẵn)
+    - 3.6 Button tính tiền
+  - 4 Người dùng: 
+    - 4.1 Nhập chỉ số khối điện tháng này
+    - 4.2 Nhập chỉ số khối nước tháng này
+    - 4.3 Chọn tính tiền
+  - 5 Hệ thống: Chuyển sang màn hình Bill
+  - 6 Hệ thống: màn hình Bill gồm
+    - 6.1 Text
+      - Nội dung: Thời gian tính tiền từ DD/MM/YYYY đến DD/MM/YYYY
+    - 6.2 Text
+      - Nội dung: Điện - Cách tính - Kết quả
+    - 6.3 Text
+      - Nội dung: Nước - Cách tính - Kết quả
+    - 6.4 Danh sách Text các phụ phí
+      - Nội dung: Tên - Giá tiền
+    - 6.5 Text
+      - Nội dung: Tiền nhà - Giá Tiền
+    - 6.6 Text
+      - Nội dung: Tổng giá tiền
+    - 6.7 Button
+      - Nội dung: Hoàn Tất
+  - 7 Người dùng: Chọn Hoàn Tất
+  - 8 Hệ Thống: Chuyển sang màn hình Home.
+
+- **Các trường hợp ngoại lệ**: 
+  - 4.1.a Người dùng: Nhập chỉ số điện tháng này cao hơn tháng trước
+    - Hệ thống: Chuyển textField điện tháng này sang error với thông báo "Không được nhập tháng sau cao hơn tháng trước"
+  - 4.2.a Người dùng: Nhập chỉ số nước tháng này cao hơn tháng trước
+    - Hệ thống: Chuyển textField nước tháng này sang error với thông báo "Không được nhập tháng sau cao hơn tháng trước"
+  - 4.a Người dùng: 
+    - 4.1 Để trống
+    - 4.2 Để trống
+    - Hệ thống: Chuyển textField nước và điện sang error với thông báo "Không được để trống"
+  - 4.a Người dùng: Nhập chỉ số điện tháng trước thấp hơn tháng này
+    - Hệ thống: Chuyển textField điện tháng trước sang error với thông báo "Không được nhập tháng trước thấp hơn tháng sau"
+  - 4.b Người dùng: Nhập chỉ số nước tháng trước thấp hơn tháng này
+    - Hệ thống: Chuyển textField nước tháng trước sang error với thông báo "Không được nhập tháng trước thấp hơn tháng sau"
+
+#### 4. Wireframes (nếu có):
+
+
+#### 5. Tham khảo:
+
