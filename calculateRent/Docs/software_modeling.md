@@ -624,6 +624,19 @@ classDiagram
 
 ###### Flow
 
+```mermaid
+graph TB
+  A((Bắt đầu: Màn hình Home)) -->|Chọn FAB| B((Màn hình Calculate))
+  B -->|Người dùng nhập thông tin| B1{Kiểm tra dữ liệu}
+  B1 -->|Dữ liệu hợp lệ| C((Màn hình Bill))
+  B1 -->|Điện tháng này > tháng trước| B1a[Hiển thị lỗi: 'Không được nhập tháng sau cao hơn tháng trước']
+B1 -->|Nước tháng này > tháng trước| B1b[Hiển thị lỗi: 'Không được nhập tháng sau cao hơn tháng trước']
+B1 -->|Để trống điện/nước| B1c[Hiển thị lỗi: 'Không được để trống']
+B1 -->|Điện tháng trước < tháng này| B1d[Hiển thị lỗi: 'Không được nhập tháng trước thấp hơn tháng sau']
+B1 -->|Nước tháng trước < tháng này| B1e[Hiển thị lỗi: 'Không được nhập tháng trước thấp hơn tháng sau']
+C -->|Chọn Hoàn Tất| D((Màn hình Home))
+```
+
 ###### Process
 - **Bắt đầu**: Màn hình Home.
 - **Quy trình cơ bản**: 
@@ -668,18 +681,18 @@ classDiagram
   - 8 Hệ Thống: Chuyển sang màn hình Home.
 
 - **Các trường hợp ngoại lệ**: 
-  - 4.1.a Người dùng: Nhập chỉ số điện tháng này thấp hơn tháng trước
-    - Hệ thống: Chuyển textField điện tháng này sang error với thông báo "Không được nhập tháng sau thấp hơn tháng trước"
-  - 4.2.a Người dùng: Nhập chỉ số nước tháng này thấp hơn tháng trước
-    - Hệ thống: Chuyển textField nước tháng này sang error với thông báo "Không được nhập tháng sau thấp hơn tháng trước"
+  - 4.1.a Người dùng: Nhập chỉ số điện tháng này cao hơn tháng trước
+    - Hệ thống: Chuyển textField điện tháng này sang error với thông báo "Không được nhập tháng sau cao hơn tháng trước"
+  - 4.2.a Người dùng: Nhập chỉ số nước tháng này cao hơn tháng trước
+    - Hệ thống: Chuyển textField nước tháng này sang error với thông báo "Không được nhập tháng sau cao hơn tháng trước"
   - 4.a Người dùng: 
     - 4.1 Để trống
     - 4.2 Để trống
     - Hệ thống: Chuyển textField nước và điện sang error với thông báo "Không được để trống"
-  - 4.a Người dùng: Nhập chỉ số điện tháng trước cao hơn tháng này
-    - Hệ thống: Chuyển textField điện tháng trước sang error với thông báo "Không được nhập tháng trước cao hơn tháng sau"
-  - 4.b Người dùng: Nhập chỉ số nước tháng trước cao hơn tháng này
-    - Hệ thống: Chuyển textField nước tháng trước sang error với thông báo "Không được nhập tháng trước cao hơn tháng sau"
+  - 4.a Người dùng: Nhập chỉ số điện tháng trước thấp hơn tháng này
+    - Hệ thống: Chuyển textField điện tháng trước sang error với thông báo "Không được nhập tháng trước thấp hơn tháng sau"
+  - 4.b Người dùng: Nhập chỉ số nước tháng trước thấp hơn tháng này
+    - Hệ thống: Chuyển textField nước tháng trước sang error với thông báo "Không được nhập tháng trước thấp hơn tháng sau"
 
 #### 4. Wireframes (nếu có):
 
