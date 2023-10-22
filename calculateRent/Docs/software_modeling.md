@@ -699,3 +699,54 @@ C -->|Chọn Hoàn Tất| D((Màn hình Home))
 
 #### 5. Tham khảo:
 
+---
+
+### UI Flow for Camera detect
+
+#### 1. Yêu cầu thiết kế giao diện:
+- **Phong cách thiết kế**: [Material Design 3 Kit](https://www.figma.com/community/file/1035203688168086460)
+- **Công cụ, phần mềm thiết kế giao diện**: Figma
+- **Màu sắc background Camera**: Đen.
+- **Viền Camera**: Chưa biết
+- **Logo & hình ảnh**: Không.
+
+#### 2. Luồng công việc (User Flow):
+
+##### Ghi nhận chỉ số điện, nước tự động bằng Camera
+
+###### Flow
+
+```mermaid
+graph TB
+  A((Bắt đầu: Màn hình Step 2)) -->|Chọn icon Camera trên ô TextField nhập khối điện, nước| B((Màn hình Camera))
+  B -->|Tiến hành detect chỉ số khối điện, nước trên đồng hồ điện, nước| B1{Kiểm tra dữ liệu trả về}
+  B1 -->|Dữ liệu hợp lệ| C((Màn hình Step 2 kèm với dữ liệu hợp lệ))
+  B1 -->|Dữ liệu thiếu số| B1a[Hiển thị thông báo: 'Vui lòng giữ Camera gần chỉ số điện, nước hơn nữa']
+  C -->|Chọn Tiếp tục| D((Màn hình Home))
+```
+
+###### Process
+- **Bắt đầu**: Màn hình Step 2.
+- **Quy trình cơ bản**:
+  - 1 Người dùng: Chọn icon Camera ở TextField.
+  - 2 Hệ thống: Chuyển qua màn hình Camera để detect Text trên đồng hồ điện, nước.
+  - 3 Hệ thống: Màn hình Camera gồm:
+    - 3.1 Camera chính:
+      - Chức năng: Phát hiện (detect) chỉ số điện, nước trên từng loại đồng hồ cụ thề và trả về kết quả.
+      - Kết quả: Một chuỗi số nguyên gồm 5,6 chữ số kết thúc bằng (kWh) đối với ch số điện và (m3) với chỉ số nước.
+      - Kiểu dữ liệu: String.
+  - 4 Hệ thống: Màn hình Step 2
+    - 4.1 Chỉ số điện trả về được nhập vào TextField (Khối điện khởi điểm)
+    - 4.2 Chỉ số nước trả về được nhập vào TextField (Khối nước khởi điểm)
+    - 4.3 Chọn "Tiếp tục" để thực hiện bước tiếp theo.
+
+- **Các trường hợp ngoại lệ**:
+  - 4.1.a Người dùng: Lia Camera xa làm cho việc detect bị thiếu dữ liệu
+    - Hệ thống: Bên dưới màn hình Camera hiện thông báo "Vui lòng giữ Camera gần chỉ số điện, nước hơn nữa."
+
+#### 3. Wireframes (nếu có):
+
+
+#### 4. Tham khảo:
+
+---
