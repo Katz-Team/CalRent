@@ -5,18 +5,24 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -59,68 +65,219 @@ fun CalScreen() {
                     }
                 }
             ) },
+        floatingActionButton = {
+            ExtendedFloatingActionButton(
+                onClick = {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        viewModel.getLastBillTemp().let {
+                            Navigator.navigateTo(Screen.BillScreen(it,false))
+                        }
+                    }
+                },
+                icon = { Icon(Icons.Default.Check,Icons.Default.Check.name) },
+                text = { Text("Tính tiền") },
+            )
+        },
         content = { innerPadding ->
             Box(modifier = Modifier
+                .verticalScroll(rememberScrollState())
                 .fillMaxSize()
-                .padding(top = 60.dp, bottom = 60.dp)) {
+                .padding(
+                    top = innerPadding.calculateTopPadding(),
+                    start = 14.dp,
+                    end = 14.dp
+                )) {
 
                 Column(modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(0.9f),
-                    verticalArrangement = Arrangement.spacedBy(14.dp) ,
-                    horizontalAlignment = Alignment.CenterHorizontally) {
+                    .fillMaxHeight(),
+                    verticalArrangement = Arrangement.spacedBy(12.dp) ,
+                ) {
 
-                    Spacer(modifier = Modifier
-                        .fillMaxWidth()
-                        .height(ButtonDefaults.IconSize)
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
 
-                    OutlinedTextField(
-                        modifier = Modifier.fillMaxWidth(0.9f),
-                        label = { Text("Khối Điện") },
-                        value = viewModel.getElect().collectAsStateWithLifecycle().value,
-                        onValueChange = {
-                            if (it.isDigitsOnly()) {
-                                viewModel.setElect(it)
-                            }
-                        },
-                        trailingIcon = { Text("Kwh") },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Decimal,
-                            imeAction = ImeAction.Next
+                        OutlinedTextField(
+                            modifier = Modifier.weight(1f),
+                            label = { Text("Khối điện tháng trước") },
+                            value = viewModel.getElect().collectAsStateWithLifecycle().value,
+                            onValueChange = {
+                                if (it.isDigitsOnly()) {
+                                    viewModel.setElect(it)
+                                }
+                            },
+                            trailingIcon = { Text("Kwh") },
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Decimal,
+                                imeAction = ImeAction.Next
+                            )
                         )
-                    )
+
+                        Spacer(modifier = Modifier.weight(0.1f))
+
+                        OutlinedTextField(
+                            modifier = Modifier.weight(1f),
+                            label = { Text("Khối điện tháng này") },
+                            value = viewModel.getElect().collectAsStateWithLifecycle().value,
+                            onValueChange = {
+                                if (it.isDigitsOnly()) {
+                                    viewModel.setElect(it)
+                                }
+                            },
+                            trailingIcon = { Text("Kwh") },
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Decimal,
+                                imeAction = ImeAction.Next
+                            )
+                        )
+
+                    }
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+
+
+                        OutlinedTextField(
+                            modifier = Modifier.weight(1f,fill = false),
+                            label = { Text("Khối nước tháng trước") },
+                            value = viewModel.getWater().collectAsStateWithLifecycle().value,
+                            onValueChange = {
+                                if (it.isDigitsOnly()) {
+                                    viewModel.setWater(it)
+                                }
+                            },
+                            trailingIcon = { Text("Dm3") },
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Decimal,
+                                imeAction = ImeAction.Done
+                            )
+                        )
+
+                        Spacer(modifier = Modifier.weight(0.1f))
+
+                        OutlinedTextField(
+                            modifier = Modifier.weight(1f,fill = false),
+                            label = { Text("Khối nước tháng này") },
+                            value = viewModel.getWater().collectAsStateWithLifecycle().value,
+                            onValueChange = {
+                                if (it.isDigitsOnly()) {
+                                    viewModel.setWater(it)
+                                }
+                            },
+                            trailingIcon = { Text("Dm3") },
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Decimal,
+                                imeAction = ImeAction.Done
+                            )
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    Text(text = "Giá phòng")
 
                     OutlinedTextField(
-                        modifier = Modifier.fillMaxWidth(0.9f),
-                        label = { Text("Khối Nước") },
+                        modifier = Modifier.fillMaxWidth(),
+                        label = { Text("Tiền phòng") },
                         value = viewModel.getWater().collectAsStateWithLifecycle().value,
                         onValueChange = {
                             if (it.isDigitsOnly()) {
                                 viewModel.setWater(it)
                             }
                         },
-                        trailingIcon = { Text("Dm3") },
+                        trailingIcon = { Text("VND/Tháng") },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Decimal,
                             imeAction = ImeAction.Done
                         )
                     )
 
-
-                }
-
-                Button(modifier = Modifier
-                    .fillMaxWidth(0.7f)
-                    .align(Alignment.BottomCenter),
-                    onClick = {
-                        CoroutineScope(Dispatchers.Main).launch {
-                            viewModel.getLastBillTemp().let {
-                                Navigator.navigateTo(Screen.BillScreen(it,false))
+                    OutlinedTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        label = { Text("Giá điện") },
+                        value = viewModel.getWater().collectAsStateWithLifecycle().value,
+                        onValueChange = {
+                            if (it.isDigitsOnly()) {
+                                viewModel.setWater(it)
                             }
-                        }
-                    }
-                ) { Text("Tính tiền") }
+                        },
+                        trailingIcon = { Text("VND/Tháng") },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Decimal,
+                            imeAction = ImeAction.Done
+                        )
+                    )
+
+                    OutlinedTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        label = { Text("Giá nước") },
+                        value = viewModel.getWater().collectAsStateWithLifecycle().value,
+                        onValueChange = {
+                            if (it.isDigitsOnly()) {
+                                viewModel.setWater(it)
+                            }
+                        },
+                        trailingIcon = { Text("VND/Tháng") },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Decimal,
+                            imeAction = ImeAction.Done
+                        )
+                    )
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    Text(text = "Phụ phí")
+
+                    OutlinedTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        label = { Text("Rác") },
+                        value = viewModel.getWater().collectAsStateWithLifecycle().value,
+                        onValueChange = {
+                            if (it.isDigitsOnly()) {
+                                viewModel.setWater(it)
+                            }
+                        },
+                        trailingIcon = { Text("VND/Tháng") },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Decimal,
+                            imeAction = ImeAction.Done
+                        )
+                    )
+
+                    OutlinedTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        label = { Text("WiFi") },
+                        value = viewModel.getWater().collectAsStateWithLifecycle().value,
+                        onValueChange = {
+                            if (it.isDigitsOnly()) {
+                                viewModel.setWater(it)
+                            }
+                        },
+                        trailingIcon = { Text("VND/Tháng") },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Decimal,
+                            imeAction = ImeAction.Done
+                        )
+                    )
+
+                    OutlinedTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        label = { Text("Máy Giặt") },
+                        value = viewModel.getWater().collectAsStateWithLifecycle().value,
+                        onValueChange = {
+                            if (it.isDigitsOnly()) {
+                                viewModel.setWater(it)
+                            }
+                        },
+                        trailingIcon = { Text("VND/Tháng") },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Decimal,
+                            imeAction = ImeAction.Done
+                        )
+                    )
+                }
             }
         }
     )
