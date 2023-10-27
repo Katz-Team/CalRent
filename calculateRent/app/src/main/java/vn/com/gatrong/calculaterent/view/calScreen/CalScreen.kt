@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -18,11 +17,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -31,7 +27,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -101,10 +96,10 @@ fun CalScreen() {
                         OutlinedTextField(
                             modifier = Modifier.weight(1f),
                             label = { Text("Khối điện tháng trước") },
-                            value = viewModel.getElect().collectAsStateWithLifecycle().value,
+                            value = viewModel.getKgElectNow().collectAsStateWithLifecycle().value,
                             onValueChange = {
                                 if (it.isDigitsOnly()) {
-                                    viewModel.setElect(it)
+                                    viewModel.setKgElectNow(it)
                                 }
                             },
                             trailingIcon = { Text("Kwh") },
@@ -119,10 +114,10 @@ fun CalScreen() {
                         OutlinedTextField(
                             modifier = Modifier.weight(1f),
                             label = { Text("Khối điện tháng này") },
-                            value = viewModel.getElect().collectAsStateWithLifecycle().value,
+                            value = viewModel.getKgElectNow().collectAsStateWithLifecycle().value,
                             onValueChange = {
                                 if (it.isDigitsOnly()) {
-                                    viewModel.setElect(it)
+                                    viewModel.setKgElectNow(it)
                                 }
                             },
                             trailingIcon = { Text("Kwh") },
@@ -142,10 +137,10 @@ fun CalScreen() {
                         OutlinedTextField(
                             modifier = Modifier.weight(1f,fill = false),
                             label = { Text("Khối nước tháng trước") },
-                            value = viewModel.getWater().collectAsStateWithLifecycle().value,
+                            value = viewModel.getKgWaterNow().collectAsStateWithLifecycle().value,
                             onValueChange = {
                                 if (it.isDigitsOnly()) {
-                                    viewModel.setWater(it)
+                                    viewModel.setKgWaterNow(it)
                                 }
                             },
                             trailingIcon = { Text("Dm3") },
@@ -160,10 +155,10 @@ fun CalScreen() {
                         OutlinedTextField(
                             modifier = Modifier.weight(1f,fill = false),
                             label = { Text("Khối nước tháng này") },
-                            value = viewModel.getWater().collectAsStateWithLifecycle().value,
+                            value = viewModel.getKgWaterNow().collectAsStateWithLifecycle().value,
                             onValueChange = {
                                 if (it.isDigitsOnly()) {
-                                    viewModel.setWater(it)
+                                    viewModel.setKgWaterNow(it)
                                 }
                             },
                             trailingIcon = { Text("Dm3") },
@@ -181,10 +176,10 @@ fun CalScreen() {
                     OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
                         label = { Text("Tiền phòng") },
-                        value = viewModel.getWater().collectAsStateWithLifecycle().value,
+                        value = viewModel.getKgWaterNow().collectAsStateWithLifecycle().value,
                         onValueChange = {
                             if (it.isDigitsOnly()) {
-                                viewModel.setWater(it)
+                                viewModel.setKgWaterNow(it)
                             }
                         },
                         trailingIcon = { Text("VND/Tháng") },
@@ -197,10 +192,10 @@ fun CalScreen() {
                     OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
                         label = { Text("Giá điện") },
-                        value = viewModel.getWater().collectAsStateWithLifecycle().value,
+                        value = viewModel.getKgWaterNow().collectAsStateWithLifecycle().value,
                         onValueChange = {
                             if (it.isDigitsOnly()) {
-                                viewModel.setWater(it)
+                                viewModel.setKgWaterNow(it)
                             }
                         },
                         trailingIcon = { Text("VND/Tháng") },
@@ -213,10 +208,10 @@ fun CalScreen() {
                     OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
                         label = { Text("Giá nước") },
-                        value = viewModel.getWater().collectAsStateWithLifecycle().value,
+                        value = viewModel.getKgWaterNow().collectAsStateWithLifecycle().value,
                         onValueChange = {
                             if (it.isDigitsOnly()) {
-                                viewModel.setWater(it)
+                                viewModel.setKgWaterNow(it)
                             }
                         },
                         trailingIcon = { Text("VND/Tháng") },
@@ -233,10 +228,10 @@ fun CalScreen() {
                     OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
                         label = { Text("Rác") },
-                        value = viewModel.getWater().collectAsStateWithLifecycle().value,
+                        value = viewModel.getKgWaterNow().collectAsStateWithLifecycle().value,
                         onValueChange = {
                             if (it.isDigitsOnly()) {
-                                viewModel.setWater(it)
+                                viewModel.setKgWaterNow(it)
                             }
                         },
                         trailingIcon = { Text("VND/Tháng") },
@@ -249,10 +244,10 @@ fun CalScreen() {
                     OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
                         label = { Text("WiFi") },
-                        value = viewModel.getWater().collectAsStateWithLifecycle().value,
+                        value = viewModel.getKgWaterNow().collectAsStateWithLifecycle().value,
                         onValueChange = {
                             if (it.isDigitsOnly()) {
-                                viewModel.setWater(it)
+                                viewModel.setKgWaterNow(it)
                             }
                         },
                         trailingIcon = { Text("VND/Tháng") },
@@ -265,10 +260,10 @@ fun CalScreen() {
                     OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
                         label = { Text("Máy Giặt") },
-                        value = viewModel.getWater().collectAsStateWithLifecycle().value,
+                        value = viewModel.getKgWaterNow().collectAsStateWithLifecycle().value,
                         onValueChange = {
                             if (it.isDigitsOnly()) {
-                                viewModel.setWater(it)
+                                viewModel.setKgWaterNow(it)
                             }
                         },
                         trailingIcon = { Text("VND/Tháng") },
