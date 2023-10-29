@@ -64,8 +64,10 @@ fun CalScreen() {
             ExtendedFloatingActionButton(
                 onClick = {
                     CoroutineScope(Dispatchers.Main).launch {
-                        viewModel.getLastBillTemp().let {
-                            Navigator.navigateTo(Screen.BillScreen(it,false))
+                        viewModel.getBill().let {
+                            viewModel.insertBill(bill = it) {
+                                Navigator.navigateTo(Screen.BillScreen(it,false))
+                            }
                         }
                     }
                 },

@@ -7,10 +7,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import vn.com.gatrong.calculaterent.model.Bill
+import vn.com.gatrong.calculaterent.model.ElectricityBill
+import vn.com.gatrong.calculaterent.model.Surcharge
+import vn.com.gatrong.calculaterent.model.WaterBill
 import vn.com.gatrong.calculaterent.usecase.DatabaseUsecase
 
 class CalViewModel : ViewModel() {
@@ -30,6 +32,10 @@ class CalViewModel : ViewModel() {
     private val priceWater = MutableStateFlow("")
 
     private val surcharges = mutableStateListOf<MutableStateFlow<String>>()
+
+    private val preTime = MutableStateFlow(System.currentTimeMillis())
+
+    private val nowTime = MutableStateFlow(System.currentTimeMillis())
 
     private val databaseUsecase = DatabaseUsecase()
 
@@ -96,16 +102,18 @@ class CalViewModel : ViewModel() {
             priceElect.value = bill.electricityBill.price.toString()
             priceWater.value = bill.waterBill.price.toString()
 
+            preTime.value = bill.timeFrom
+
             bill.surcharges.forEach {
                 surcharges.add(MutableStateFlow(it.price.toString()))
             }
         }
     }
 
-    fun insertBill( onDone: (bill : Bill) -> Unit ) {
+    fun insertBill(bill: Bill, onDone: (bill : Bill) -> Unit ) {
         viewModelScope.launch(Dispatchers.IO) {
             withContext(Dispatchers.IO) {
-                databaseUsecase.insertBill(kgElectNow.value.toInt(),kgWaterNow.value.toInt(),System.currentTimeMillis())
+                databaseUsecase.insertBill(bill)
                 withContext(Dispatchers.Main) {
                     onDone.invoke(databaseUsecase.getNewBill())
                 }
@@ -114,9 +122,28 @@ class CalViewModel : ViewModel() {
         }
     }
 
-    suspend fun getLastBillTemp() : Bill {
-        return viewModelScope.async {
-            databaseUsecase.getLastBillTemp(kgElectNow.value.toInt(),kgWaterNow.value.toInt(),System.currentTimeMillis())
-        }.await()
+    fun getBill() : Bill {
+        return Bill(
+            electricityBill = ElectricityBill(
+                preElectric = kgElectPre.value.toInt(),
+                newElectric = kgElectNow.value.toInt(),
+                price = priceElect.value.toInt()
+            ),
+            waterBill = WaterBill(
+                preWater = kgWaterPre.value.toInt(),
+                newWater = kgWaterNow.value.toInt(),
+                price = priceWater.value.toInt()
+            ),
+            moneyRent = moneyRoom.value.toLong(),
+            surcharges = surcharges.mapIndexed {
+                    index, mutableStateFlow ->
+                Surcharge(
+                    id = index.toLong(),
+                    price = mutableStateFlow.value.toInt(),
+                )
+            } as ArrayList<Surcharge>,
+            timeFrom = preTime.value,
+            timeTo = nowTime.value
+        )
     }
 }
