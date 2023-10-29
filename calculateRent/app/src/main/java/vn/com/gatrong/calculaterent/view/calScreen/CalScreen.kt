@@ -173,7 +173,10 @@ fun CalScreen() {
 
                     Spacer(modifier = Modifier.weight(1f))
 
-                    Text(text = "Giá phòng")
+                    Text(
+                        text = "Giá phòng",
+                        style = MaterialTheme.typography.titleMedium
+                    )
 
                     OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
@@ -225,7 +228,10 @@ fun CalScreen() {
 
                     Spacer(modifier = Modifier.weight(1f))
 
-                    Text(text = "Phụ phí")
+                    Text(
+                        text = "Phụ phí",
+                        style = MaterialTheme.typography.titleMedium
+                    )
 
                     val surcharges = viewModel.getSurcharges()
 
