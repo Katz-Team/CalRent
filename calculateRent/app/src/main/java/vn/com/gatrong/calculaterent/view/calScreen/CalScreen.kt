@@ -225,15 +225,16 @@ fun CalScreen() {
 
                     Text(text = "Phụ phí")
 
-                    val surcharges = viewModel.getSurcharges().collectAsStateWithLifecycle().value
+                    val surcharges = viewModel.getSurcharges()
 
                     surcharges.forEachIndexed { index, s ->
+                        val value = s.collectAsStateWithLifecycle().value
                         OutlinedTextField(
                             modifier = Modifier.fillMaxWidth(),
                             label = { Text("Phụ phí ${index + 1}") },
-                            value = s,
+                            value = value,
                             onValueChange = {
-                                viewModel.setSurcharges(surcharges.apply { set(index,it) })
+                                viewModel.setSurcharges(index,it)
                             },
                             trailingIcon = { Text("VND/Tháng") },
                             keyboardOptions = KeyboardOptions(

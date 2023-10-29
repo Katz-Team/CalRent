@@ -1,11 +1,13 @@
 package vn.com.gatrong.calculaterent.view.calScreen
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import vn.com.gatrong.calculaterent.model.Bill
@@ -27,7 +29,7 @@ class CalViewModel : ViewModel() {
 
     private val priceWater = MutableStateFlow("")
 
-    private val surcharges = MutableStateFlow(arrayListOf(String()))
+    private val surcharges = mutableStateListOf<MutableStateFlow<String>>()
 
     private val databaseUsecase = DatabaseUsecase()
 
@@ -59,8 +61,9 @@ class CalViewModel : ViewModel() {
         priceWater.value = value
     }
 
-    fun setSurcharges(value : ArrayList<String>) {
-        surcharges.value = value
+    fun setSurcharges(index: Int, value : String) {
+        surcharges.removeAt(index)
+        surcharges.add(index,MutableStateFlow(value))
     }
 
     fun getKgElectNow() = kgElectNow.asStateFlow()
@@ -77,7 +80,7 @@ class CalViewModel : ViewModel() {
 
     fun getPriceWater() = priceWater.asStateFlow()
 
-    fun getSurcharges() = surcharges.asStateFlow()
+    fun getSurcharges() = surcharges
 
     init {
         viewModelScope.launch {
@@ -93,7 +96,9 @@ class CalViewModel : ViewModel() {
             priceElect.value = bill.electricityBill.price.toString()
             priceWater.value = bill.waterBill.price.toString()
 
-            surcharges.value = bill.surcharges.map { it.price.toString() } as ArrayList<String>
+            bill.surcharges.forEach {
+                surcharges.add(MutableStateFlow(it.price.toString()))
+            }
         }
     }
 
