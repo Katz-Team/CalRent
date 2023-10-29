@@ -96,10 +96,10 @@ fun CalScreen() {
                         OutlinedTextField(
                             modifier = Modifier.weight(1f),
                             label = { Text("Khối điện tháng trước") },
-                            value = viewModel.getKgElectNow().collectAsStateWithLifecycle().value,
+                            value = viewModel.getKgElectPre().collectAsStateWithLifecycle().value,
                             onValueChange = {
                                 if (it.isDigitsOnly()) {
-                                    viewModel.setKgElectNow(it)
+                                    viewModel.setKgElectPre(it)
                                 }
                             },
                             trailingIcon = { Text("Kwh") },
@@ -137,10 +137,10 @@ fun CalScreen() {
                         OutlinedTextField(
                             modifier = Modifier.weight(1f,fill = false),
                             label = { Text("Khối nước tháng trước") },
-                            value = viewModel.getKgWaterNow().collectAsStateWithLifecycle().value,
+                            value = viewModel.getKgWaterPre().collectAsStateWithLifecycle().value,
                             onValueChange = {
                                 if (it.isDigitsOnly()) {
-                                    viewModel.setKgWaterNow(it)
+                                    viewModel.setKgWaterPre(it)
                                 }
                             },
                             trailingIcon = { Text("Dm3") },
@@ -176,10 +176,10 @@ fun CalScreen() {
                     OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
                         label = { Text("Tiền phòng") },
-                        value = viewModel.getKgWaterNow().collectAsStateWithLifecycle().value,
+                        value = viewModel.getMoneyRoom().collectAsStateWithLifecycle().value,
                         onValueChange = {
                             if (it.isDigitsOnly()) {
-                                viewModel.setKgWaterNow(it)
+                                viewModel.setMoneyRoom(it)
                             }
                         },
                         trailingIcon = { Text("VND/Tháng") },
@@ -192,10 +192,10 @@ fun CalScreen() {
                     OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
                         label = { Text("Giá điện") },
-                        value = viewModel.getKgWaterNow().collectAsStateWithLifecycle().value,
+                        value = viewModel.getPriceElect().collectAsStateWithLifecycle().value,
                         onValueChange = {
                             if (it.isDigitsOnly()) {
-                                viewModel.setKgWaterNow(it)
+                                viewModel.setPriceElect(it)
                             }
                         },
                         trailingIcon = { Text("VND/Tháng") },
@@ -208,10 +208,10 @@ fun CalScreen() {
                     OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
                         label = { Text("Giá nước") },
-                        value = viewModel.getKgWaterNow().collectAsStateWithLifecycle().value,
+                        value = viewModel.getPriceWater().collectAsStateWithLifecycle().value,
                         onValueChange = {
                             if (it.isDigitsOnly()) {
-                                viewModel.setKgWaterNow(it)
+                                viewModel.setPriceWater(it)
                             }
                         },
                         trailingIcon = { Text("VND/Tháng") },
@@ -225,53 +225,23 @@ fun CalScreen() {
 
                     Text(text = "Phụ phí")
 
-                    OutlinedTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        label = { Text("Rác") },
-                        value = viewModel.getKgWaterNow().collectAsStateWithLifecycle().value,
-                        onValueChange = {
-                            if (it.isDigitsOnly()) {
-                                viewModel.setKgWaterNow(it)
-                            }
-                        },
-                        trailingIcon = { Text("VND/Tháng") },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Decimal,
-                            imeAction = ImeAction.Done
-                        )
-                    )
+                    val surcharges = viewModel.getSurcharges().collectAsStateWithLifecycle().value
 
-                    OutlinedTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        label = { Text("WiFi") },
-                        value = viewModel.getKgWaterNow().collectAsStateWithLifecycle().value,
-                        onValueChange = {
-                            if (it.isDigitsOnly()) {
-                                viewModel.setKgWaterNow(it)
-                            }
-                        },
-                        trailingIcon = { Text("VND/Tháng") },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Decimal,
-                            imeAction = ImeAction.Done
+                    surcharges.forEachIndexed { index, s ->
+                        OutlinedTextField(
+                            modifier = Modifier.fillMaxWidth(),
+                            label = { Text("Phụ phí ${index + 1}") },
+                            value = s,
+                            onValueChange = {
+                                viewModel.setSurcharges(surcharges.apply { set(index,it) })
+                            },
+                            trailingIcon = { Text("VND/Tháng") },
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Decimal,
+                                imeAction = ImeAction.Done
+                            )
                         )
-                    )
-
-                    OutlinedTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        label = { Text("Máy Giặt") },
-                        value = viewModel.getKgWaterNow().collectAsStateWithLifecycle().value,
-                        onValueChange = {
-                            if (it.isDigitsOnly()) {
-                                viewModel.setKgWaterNow(it)
-                            }
-                        },
-                        trailingIcon = { Text("VND/Tháng") },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Decimal,
-                            imeAction = ImeAction.Done
-                        )
-                    )
+                    }
                 }
             }
         }

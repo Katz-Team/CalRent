@@ -27,6 +27,8 @@ class CalViewModel : ViewModel() {
 
     private val priceWater = MutableStateFlow("")
 
+    private val surcharges = MutableStateFlow(arrayListOf(String()))
+
     private val databaseUsecase = DatabaseUsecase()
 
     fun setKgElectNow(value : String) {
@@ -57,6 +59,10 @@ class CalViewModel : ViewModel() {
         priceWater.value = value
     }
 
+    fun setSurcharges(value : ArrayList<String>) {
+        surcharges.value = value
+    }
+
     fun getKgElectNow() = kgElectNow.asStateFlow()
 
     fun getKgWaterNow() = kgWaterNow.asStateFlow()
@@ -70,6 +76,26 @@ class CalViewModel : ViewModel() {
     fun getPriceElect() = priceElect.asStateFlow()
 
     fun getPriceWater() = priceWater.asStateFlow()
+
+    fun getSurcharges() = surcharges.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            val bill = databaseUsecase.getLastBillTemp(0,0,System.currentTimeMillis())
+
+            kgElectPre.value = bill.electricityBill.preElectric.toString()
+            kgWaterPre.value = bill.waterBill.preWater.toString()
+
+            kgElectNow.value = bill.electricityBill.newElectric.toString()
+            kgWaterNow.value = bill.waterBill.newWater.toString()
+
+            moneyRoom.value = bill.moneyRent.toString()
+            priceElect.value = bill.electricityBill.price.toString()
+            priceWater.value = bill.waterBill.price.toString()
+
+            surcharges.value = bill.surcharges.map { it.price.toString() } as ArrayList<String>
+        }
+    }
 
     fun insertBill( onDone: (bill : Bill) -> Unit ) {
         viewModelScope.launch(Dispatchers.IO) {
