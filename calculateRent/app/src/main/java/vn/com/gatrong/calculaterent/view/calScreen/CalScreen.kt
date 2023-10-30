@@ -28,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,6 +39,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import vn.com.gatrong.calculaterent.R
 import vn.com.gatrong.calculaterent.navigation.Screen
 import vn.com.gatrong.calculaterent.navigation.Navigator
 
@@ -63,10 +65,12 @@ fun CalScreen() {
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 onClick = {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        viewModel.getBill().let {
-                            viewModel.insertBill(bill = it) {
-                                Navigator.navigateTo(Screen.BillScreen(it,false))
+                    if (viewModel.isAllInfoValid()) {
+                        CoroutineScope(Dispatchers.Main).launch {
+                            viewModel.getBill().let {
+                                viewModel.insertBill(bill = it) {
+                                    Navigator.navigateTo(Screen.BillScreen(it,false))
+                                }
                             }
                         }
                     }
@@ -95,16 +99,29 @@ fun CalScreen() {
                         modifier = Modifier.fillMaxWidth(),
                     ) {
 
+                        val kgElectPre = viewModel.getKgElectPre().collectAsStateWithLifecycle().value
+                        val kgElectPreMessageError = viewModel.getKgElectPreMessageError().collectAsStateWithLifecycle().value
+
                         OutlinedTextField(
                             modifier = Modifier.weight(1f),
+                            isError = kgElectPre.isEmpty() || kgElectPreMessageError.isNotEmpty(),
                             label = { Text("Khối điện tháng trước") },
-                            value = viewModel.getKgElectPre().collectAsStateWithLifecycle().value,
+                            value = kgElectPre,
                             onValueChange = {
                                 if (it.isDigitsOnly()) {
                                     viewModel.setKgElectPre(it)
                                 }
                             },
                             trailingIcon = { Text("Kwh") },
+                            supportingText = {
+                                if (kgElectPre.isEmpty()) {
+                                    Text(text = stringResource(id = R.string.do_not_empty))
+                                } else {
+                                    if (kgElectPreMessageError.isNotEmpty()) {
+                                        Text(text = stringResource(id = kgElectPreMessageError.toInt()))
+                                    }
+                                }
+                            },
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = KeyboardType.Decimal,
                                 imeAction = ImeAction.Next
@@ -113,16 +130,29 @@ fun CalScreen() {
 
                         Spacer(modifier = Modifier.weight(0.1f))
 
+                        val kgElectNow = viewModel.getKgElectNow().collectAsStateWithLifecycle().value
+                        val kgElectNowMessageError = viewModel.getKgElectNowMessageError().collectAsStateWithLifecycle().value
+                                
                         OutlinedTextField(
                             modifier = Modifier.weight(1f),
+                            isError = kgElectNow.isEmpty() || kgElectNowMessageError.isNotEmpty(),
                             label = { Text("Khối điện tháng này") },
-                            value = viewModel.getKgElectNow().collectAsStateWithLifecycle().value,
+                            value = kgElectNow,
                             onValueChange = {
                                 if (it.isDigitsOnly()) {
                                     viewModel.setKgElectNow(it)
                                 }
                             },
                             trailingIcon = { Text("Kwh") },
+                            supportingText = {
+                                if (kgElectNow.isEmpty()) {
+                                    Text(text = stringResource(id = R.string.do_not_empty))
+                                } else {
+                                    if (kgElectNowMessageError.isNotEmpty()) {
+                                        Text(text = stringResource(id = kgElectNowMessageError.toInt()))
+                                    }
+                                }
+                            },
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = KeyboardType.Decimal,
                                 imeAction = ImeAction.Next
@@ -135,17 +165,29 @@ fun CalScreen() {
                         modifier = Modifier.fillMaxWidth(),
                     ) {
 
-
+                        val kgWaterPre = viewModel.getKgWaterPre().collectAsStateWithLifecycle().value
+                        val kgWaterPreMessageError = viewModel.getKgWaterPreMessageError().collectAsStateWithLifecycle().value
+                        
                         OutlinedTextField(
                             modifier = Modifier.weight(1f,fill = false),
+                            isError = kgWaterPre.isEmpty() || kgWaterPreMessageError.isNotEmpty(),
                             label = { Text("Khối nước tháng trước") },
-                            value = viewModel.getKgWaterPre().collectAsStateWithLifecycle().value,
+                            value = kgWaterPre,
                             onValueChange = {
                                 if (it.isDigitsOnly()) {
                                     viewModel.setKgWaterPre(it)
                                 }
                             },
                             trailingIcon = { Text("Dm3") },
+                            supportingText = {
+                                if (kgWaterPre.isEmpty()) {
+                                    Text(text = stringResource(id = R.string.do_not_empty))
+                                } else {
+                                    if (kgWaterPreMessageError.isNotEmpty()) {
+                                        Text(text = stringResource(id = kgWaterPreMessageError.toInt()))
+                                    }
+                                }
+                            },
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = KeyboardType.Decimal,
                                 imeAction = ImeAction.Done
@@ -154,16 +196,29 @@ fun CalScreen() {
 
                         Spacer(modifier = Modifier.weight(0.1f))
 
+                        val kgWaterNow = viewModel.getKgWaterNow().collectAsStateWithLifecycle().value
+                        val kgWaterNowMessageError = viewModel.getKgWaterNowMessageError().collectAsStateWithLifecycle().value
+                        
                         OutlinedTextField(
                             modifier = Modifier.weight(1f,fill = false),
+                            isError = kgWaterNow.isEmpty() || kgWaterNowMessageError.isNotEmpty(),
                             label = { Text("Khối nước tháng này") },
-                            value = viewModel.getKgWaterNow().collectAsStateWithLifecycle().value,
+                            value = kgWaterNow,
                             onValueChange = {
                                 if (it.isDigitsOnly()) {
                                     viewModel.setKgWaterNow(it)
                                 }
                             },
                             trailingIcon = { Text("Dm3") },
+                            supportingText = {
+                                if (kgWaterNow.isEmpty()) {
+                                    Text(text = stringResource(id = R.string.do_not_empty))
+                                } else {
+                                    if (kgWaterNowMessageError.isNotEmpty()) {
+                                        Text(text = stringResource(id = kgWaterNowMessageError.toInt()))
+                                    }
+                                }
+                            },
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = KeyboardType.Decimal,
                                 imeAction = ImeAction.Done
@@ -178,48 +233,72 @@ fun CalScreen() {
                         style = MaterialTheme.typography.titleMedium
                     )
 
+                    val moneyRoom = viewModel.getMoneyRoom().collectAsStateWithLifecycle().value
+
                     OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
+                        isError = moneyRoom.isEmpty(),
                         label = { Text("Tiền phòng") },
-                        value = viewModel.getMoneyRoom().collectAsStateWithLifecycle().value,
+                        value = moneyRoom,
                         onValueChange = {
                             if (it.isDigitsOnly()) {
                                 viewModel.setMoneyRoom(it)
                             }
                         },
                         trailingIcon = { Text("VND/Tháng") },
+                        supportingText = {
+                            if (moneyRoom.isEmpty()) {
+                                Text(stringResource(id = R.string.do_not_empty))
+                            }
+                         },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Decimal,
                             imeAction = ImeAction.Done
                         )
                     )
 
+                    val priceElect = viewModel.getPriceElect().collectAsStateWithLifecycle().value
+
                     OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
+                        isError = priceElect.isEmpty(),
                         label = { Text("Giá điện") },
-                        value = viewModel.getPriceElect().collectAsStateWithLifecycle().value,
+                        value = priceElect,
                         onValueChange = {
                             if (it.isDigitsOnly()) {
                                 viewModel.setPriceElect(it)
                             }
                         },
                         trailingIcon = { Text("VND/Tháng") },
+                        supportingText = {
+                            if (priceElect.isEmpty()) {
+                                Text(stringResource(id = R.string.do_not_empty))
+                            }
+                         },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Decimal,
                             imeAction = ImeAction.Done
                         )
                     )
 
+                    val priceWater = viewModel.getPriceWater().collectAsStateWithLifecycle().value
+
                     OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
+                        isError = priceWater.isEmpty(),
                         label = { Text("Giá nước") },
-                        value = viewModel.getPriceWater().collectAsStateWithLifecycle().value,
+                        value = priceWater,
                         onValueChange = {
                             if (it.isDigitsOnly()) {
                                 viewModel.setPriceWater(it)
                             }
                         },
                         trailingIcon = { Text("VND/Tháng") },
+                        supportingText = {
+                            if (priceWater.isEmpty()) {
+                                Text(stringResource(id = R.string.do_not_empty))
+                            }
+                        },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Decimal,
                             imeAction = ImeAction.Done
