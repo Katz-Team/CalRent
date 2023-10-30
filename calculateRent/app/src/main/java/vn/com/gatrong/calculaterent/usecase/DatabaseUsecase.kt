@@ -26,6 +26,7 @@ class DatabaseUsecase {
 
     suspend fun insertBill(bill: Bill) {
         RepositoryImpl.getInstance().insertBill(bill)
+        newBill = bill
     }
 
     suspend fun getLastBillTemp(kgElect: Int, kgWater: Int, time: Long ) : Bill {
