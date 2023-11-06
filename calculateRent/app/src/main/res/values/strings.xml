@@ -1,4 +1,8 @@
 <resources>
-    <string name="app_name">calculateRent</string>
+    <string name="app_name">CRent</string>
     <string name="initRoom">Khởi tạo phòng</string>
+    <string name="do_not_empty">Không được để trống</string>
+    <string name="not_bigger_than_last_month">Không lớn hơn tháng trước</string>
+    <string name="not_smaller_than_last_month">Không bé hơn tháng trước</string>
+    <string name="empty" />
 </resources>
