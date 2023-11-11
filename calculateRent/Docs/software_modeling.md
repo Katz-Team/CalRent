@@ -133,13 +133,13 @@ graph LR
 ### User Story Map
 
 
-| Tính tiền điện nước                 | Quản lý tiền trọ                           | Thông báo ngày tính tiền         | Khởi tạo mặc định               |
-|-------------------------------------|--------------------------------------------|----------------------------------|---------------------------------|
-| Ghi nhận tiêu thụ điện nước (1)     | Xem Lịch sử thanh toán tiền trọ (1)        | Thông báo đến hạn thanh toán (1) | Ghi nhận thông tin thủ công (1) |
-| Nhập điện nước qua hình ảnh    (1)  | Xóa lịch sử thanh toán đã chọn (1)         | Tắt/Bật thông báo  (2)           |                                 |
-| Nhập điện nước từ hình hóa đơn (2)  | Chỉnh sửa thông tin tiền trọ đã chọn (1)   |                                  |                                 |
-|                                     | Chỉnh sửa thông tin mặc định tiền trọ  (1) |                                  |                                 |
-|                                     | Lưu thanh toán tiền trọ mới (1)            |                                  |                                 |
+| Tính tiền điện nước                 | Quản lý tiền trọ                                        | Thông báo ngày tính tiền         | Khởi tạo mặc định               |
+|-------------------------------------|---------------------------------------------------------|----------------------------------|---------------------------------|
+| Ghi nhận tiêu thụ điện nước (1)     | Xem Lịch sử thanh toán tiền trọ (1)                     | Thông báo đến hạn thanh toán (1) | Ghi nhận thông tin thủ công (1) |
+| Nhập điện nước qua hình ảnh    (1)  | Quản Lý Lịch Sử Thanh Toán thông qua Chức Năng Xóa  (1) | Tắt/Bật thông báo  (2)           |                                 |
+| Nhập điện nước từ hình hóa đơn (2)  | Chỉnh sửa thông tin tiền trọ đã chọn (1)                |                                  |                                 |
+|                                     | Chỉnh sửa thông tin mặc định tiền trọ  (1)              |                                  |                                 |
+|                                     | Lưu thanh toán tiền trọ mới (1)                         |                                  |                                 |
 
 ```
 Lưu ý:
@@ -176,10 +176,21 @@ Lưu ý:
 | User story: Người dùng muốn có khả năng xem lịch sử thanh toán tiền trọ để theo dõi các khoản thanh toán trước đây và kiểm tra tính đúng đắn của các khoản thanh toán đó.                                                                                                                                                                                                             |
 | System provide: Hệ thống cung cấp khả năng cho người thuê trọ, để xem lịch sử thanh toán tiền trọ thông qua ứng dụng di động. Điều này bao gồm việc hiển thị danh sách các khoản thanh toán trước đây bao gồm thông tin về tháng, số tiền. Tôi có thể dễ dàng xem thông tin chi tiết về từng khoản thanh toán bằng cách chọn vào một khoản cụ thể trong danh sách lịch sử thanh toán. |
 
-| Tiêu đề: Xóa lịch sử thanh toán đã chọn                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| User story:  Như một người dùng của ứng dụng, tôi muốn có khả năng xóa các bản ghi lịch sử thanh toán đã chọn để tôi có thể quản lý lịch sử thanh toán một cách hiệu quả hơn. Khi tôi chọn một bản ghi lịch sử thanh toán cụ thể và yêu cầu xóa nó, hệ thống sẽ xác nhận yêu cầu của tôi và sau đó xóa bản ghi đó khỏi danh sách lịch sử thanh toán.                                                                                                                                                                                                                                             |
-| System provide: Hệ thống hiển thị danh sách các bản ghi lịch sử thanh toán có sẵn cho người dùng. Người dùng có thể chọn một hoặc nhiều bản ghi lịch sử thanh toán để xóa. Hệ thống xác nhận với người dùng xem họ có chắc chắn muốn xóa các bản ghi đã chọn không. Nếu người dùng xác nhận, hệ thống sẽ xóa các bản ghi đã chọn khỏi danh sách lịch sử thanh toán. Hệ thống cung cấp thông báo xóa thành công cho người dùng. Nếu người dùng không xác nhận xóa hoặc hủy bỏ thao tác xóa, hệ thống quay lại danh sách lịch sử thanh toán mà không thực hiện xóa. |
+---
+
+**Tiêu đề:** Quản Lý Lịch Sử Thanh Toán thông qua Chức Năng Xóa
+
+**Mô tả User Story:**
+Là một người dùng của ứng dụng, tôi muốn có khả năng lựa chọn và xóa các bản ghi lịch sử thanh toán cụ thể. Mục tiêu của tôi là quản lý và duy trì lịch sử thanh toán của mình một cách gọn gàng và hiệu quả. Khi tôi chọn một hoặc nhiều bản ghi từ danh sách, tôi mong đợi hệ thống sẽ yêu cầu xác nhận trước khi thực hiện xóa, đảm bảo rằng tôi không xóa nhầm bản ghi quan trọng.
+
+**Chức năng Hệ thống Cung cấp:**
+- **Hiển thị Danh Sách Lịch Sử Thanh Toán**: Hệ thống sẽ hiển thị danh sách đầy đủ các bản ghi lịch sử thanh toán cho người dùng.
+- **Chọn Bản Ghi để Xóa**: Người dùng có thể lựa chọn một hoặc nhiều bản ghi từ danh sách này để xóa.
+- **Xác Nhận Trước Khi Xóa**: Sau khi người dùng chọn bản ghi cần xóa, hệ thống sẽ yêu cầu xác nhận để đảm bảo rằng người dùng không xóa nhầm bản ghi.
+- **Xử Lý Xóa Bản Ghi**: Nếu người dùng xác nhận, hệ thống sẽ tiến hành xóa các bản ghi đã chọn và cung cấp thông báo xác nhận việc xóa thành công.
+- **Hủy Xóa và Quay lại Danh Sách**: Trong trường hợp người dùng quyết định không xóa hoặc hủy thao tác, hệ thống sẽ quay lại danh sách lịch sử thanh toán mà không thực hiện xóa.
+
+---
 
 | Tiêu đề: Chỉnh sửa thông tin tiền trọ đã chọn                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 |-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
