@@ -408,21 +408,30 @@ sequenceDiagram
     participant Repository
     participant Room
 
-    User ->> FeedScreen: Chọn Edit Model
-    FeedScreen ->> FeedScreen: Chuyển sang Edit Model
-    User ->> FeedScreen: Chọn Item muốn xóa
-    User ->> FeedScreen: Chọn xóa
-    FeedScreen -->> User: Xác thực muốn xóa
+    User ->> FeedScreen: Chọn Edit Mode
+    FeedScreen ->> FeedScreen: Kích hoạt Edit Mode
+    loop Chọn Items
+        User ->> FeedScreen: Chọn các Item muốn xóa
+    end
+    User ->> FeedScreen: Yêu cầu xóa Items đã chọn
+    FeedScreen ->> User: Hiển thị xác nhận xóa
 
-    alt name
+    alt Người dùng Xác Nhận
         User ->> FeedScreen: Xác Nhận
-        FeedScreen ->> FeedViewModel: deleteBill(bill)
-        FeedViewModel ->> DatabaseUseCase: removeBill(bill)
-        DatabaseUseCase ->> Repository: removeBill(bill)
-        Repository ->> Room: deleteSurcharge(SurchargeEntity)
-        Repository ->> Room: deleteBill(BillEntity)
-    else
+        FeedScreen ->> FeedViewModel: deleteSelectedBills(listOfBills)
+        FeedViewModel ->> DatabaseUseCase: removeSelectedBills(listOfBills)
+        loop Xóa từng Bill
+            DatabaseUseCase ->> Repository: removeBill(bill)
+            Repository ->> Room: deleteBill(BillEntity)
+            Room -->> Repository: Xác nhận xóa Bill
+        end
+        Repository -->> DatabaseUseCase: Xác nhận xóa hoàn tất
+        DatabaseUseCase -->> FeedViewModel: Xác nhận xóa hoàn tất
+        FeedViewModel -->> FeedScreen: Cập nhật UI
+        FeedScreen ->> User: Hiển thị thông báo "Xóa thành công"
+    else Người dùng Hủy Bỏ
         User ->> FeedScreen: Hủy Bỏ
+        FeedScreen -->> User: Quay lại danh sách lịch sử thanh toán
     end
 ```
 
