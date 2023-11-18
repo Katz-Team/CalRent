@@ -719,3 +719,44 @@ C -->|Chọn Hoàn Tất| D((Màn hình Home))
 
 #### 5. Tham khảo:
 
+
+Dựa trên mô tả User Story của bạn, dưới đây là sơ đồ và mô tả quy trình UI Flow cho chức năng "Quản Lý Lịch Sử Thanh Toán thông qua Chức Năng Xóa":
+
+###### Flow
+
+```mermaid
+graph LR
+    A((Màn hình Home)) -->|Chọn Xem Lịch Sử Thanh Toán| B((Màn hình Lịch Sử Thanh Toán))
+    B -->|Chọn Option chỉnh sửa| C((Mode Edit))
+    C -->|Lựa chọn bản ghi cần xóa| D((Chọn icon xóa))
+    D -->|Hiện Dialog Xác nhận| E{Dialog: Xác nhận Xóa}
+    E -->|Chọn Đồng Ý| F((Cập nhật danh sách))
+    E -->|Chọn Huỷ bỏ| G((Không làm gì cả))
+    F --> B
+    G --> B
+```
+
+###### Process
+
+- **Bắt đầu**: Màn hình Home.
+- **Quy trình cơ bản**:
+  - 1 Người dùng: Chọn Xem Lịch Sử Thanh Toán từ màn hình Home.
+  - 2 Hệ thống: Hiển thị màn hình Lịch Sử Thanh Toán.
+    - 2.1 Danh sách: Các bản ghi lịch sử thanh toán.
+    - 2.2 Tùy chọn: Chỉnh sửa.
+  - 3 Người dùng: Chọn Option chỉnh sửa.
+  - 4 Hệ thống: Chuyển sang mode Edit.
+  - 5 Người dùng: Lựa chọn bản ghi cần xóa.
+  - 6 Người dùng: Chọn icon xoá ở Bottom Bar.
+  - 7 Hệ thống: Hiện Dialog.
+    - Title: Xác nhận
+    - Body: Bạn có muốn xoá item không
+    - 2 Button: Đồng Ý và Huỷ bỏ
+  - 8 Người dùng: Chọn đồng ý.
+  - 9 Hệ thống: Tắt dialog và cập nhật lại danh sách.
+
+- **Các trường hợp ngoại lệ**:
+  - 8.a Người dùng chọn huỷ bỏ:
+    - Hệ thống: Tắt dialog và không làm gì cả.
+
+
